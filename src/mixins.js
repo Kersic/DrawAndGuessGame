@@ -17,9 +17,10 @@ export const breakpoint5 = 576;
 
 export const cornerRadius = "30px";
 
-export const shadowTopLeft = "-4px -4px 14px -1px rgba(125,125,125,0.87)";
-export const shadowButtonRight = "+4px +4px 14px -1px rgba(125,125,125,0.87)";
-export const shadowAllDirections = "0px 0px 7px 1px rgba(125,125,125,0.87)";
+export const shadowTopLeft = "-4px -4px 7px 1px rgba(125,125,125,0.50)";
+export const shadowButtonRight = "+1px +1px 4px 1px rgba(125,125,125,0.50)";
+export const shadowButtonLeft = "-1px +1px 4px 1px rgba(125,125,125,0.50)";
+export const shadowAllDirections = "0px 0px 7px 1px rgba(125,125,125,0.50)";
 
 export function classNames() {
     return Array.prototype.slice.call(arguments).join(" ");
@@ -32,3 +33,10 @@ export const belowBreakpoint = (breakpoint, content) => ({
 export const aboveBreakpoint = (breakpoint, content) => ({
     [`@media only screen and (min-width: ${breakpoint - 1}px)`]: content,
 });
+
+export const center = {
+    display: "flex",
+    justifyContent: "center",
+    textAlign: "center",
+    alignItems: "center",
+}
