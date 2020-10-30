@@ -10,6 +10,7 @@ import {
     white,
 } from "../mixins";
 import RoundedInput from "./RoundedInput";
+import DrawingPanel from "./DrawingPanel";
 
 const chatWrapperSize = 50;
 const infoBoxSizes = 70;
@@ -33,13 +34,7 @@ const useStyles = createUseStyles({
         ...belowBreakpoint(breakpoint4, {
             marginBottom: `-${infoBoxSizes}px`,
             marginLeft: "20px",
-            borderBottomLeftRadius: 0,
-            borderTopRightRadius: cornerRadius,
         }),
-        backgroundColor: white,
-        borderTopLeftRadius: cornerRadius,
-        borderBottomLeftRadius: cornerRadius,
-        boxShadow: shadowAllDirections,
     },
     numOfGames: {
         backgroundColor: orange,
@@ -91,7 +86,7 @@ const useStyles = createUseStyles({
         display: "grid",
         gridTemplateRows: `${infoBoxSizes}px auto ${infoBoxSizes}px`,
         ...belowBreakpoint(breakpoint4, {
-            minHeight: "400px",
+            minHeight: window.innerWidth * 1.3,
         })
     },
     rightColumn: {
@@ -103,7 +98,7 @@ const useStyles = createUseStyles({
             minHeight: "700px",
         }),
         zIndex: 5,
-        height: "100vh"
+        height: "100vh",
     },
     chatWrapper: {
         backgroundColor: orange,
@@ -156,7 +151,7 @@ const Dashboard = () => {
                     <div className={classes.topRightBox} />
                 </div>
                 <div className={classes.paper} onClick={() => console.log("draw")}>
-
+                    <DrawingPanel />
                 </div>
                 <div className={classes.sideBoxes}>
                     <div className={classes.wordToDraw}>
