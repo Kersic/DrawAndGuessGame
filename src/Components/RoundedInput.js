@@ -18,10 +18,10 @@ const useStyles = createUseStyles({
     },
 });
 
-export const RoundedInput = () => {
+export const RoundedInput = ({value, setValue, placeholder}) => {
     const classes = useStyles();
     return (
-        <input className={classes.roundedInput} placeholder={"Write answer..."}/>
+        <input value={value} onChange={(e) => setValue(e.target.value)} className={classes.roundedInput} placeholder={placeholder}/>
     )
 }
 

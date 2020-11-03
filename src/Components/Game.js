@@ -175,7 +175,7 @@ const Game = () => {
                     </div>
                 </div>
                 <div className={classes.chatInputWrapper}>
-                    <RoundedInput />
+                    <RoundedInput placeholder={"Write answer..."} />
                     <div className={classes.sendButton}>
                         ᗌ
                     </div>
