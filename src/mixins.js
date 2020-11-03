@@ -21,6 +21,7 @@ export const shadowTopLeft = "-4px -4px 7px 1px rgba(125,125,125,0.50)";
 export const shadowButtonRight = "+1px +1px 4px 1px rgba(125,125,125,0.50)";
 export const shadowButtonLeft = "-1px +1px 4px 1px rgba(125,125,125,0.50)";
 export const shadowAllDirections = "0px 0px 7px 1px rgba(125,125,125,0.50)";
+export const textShadow = "1px 1px 2px black";
 
 export function classNames() {
     return Array.prototype.slice.call(arguments).join(" ");

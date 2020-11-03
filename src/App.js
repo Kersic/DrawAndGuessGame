@@ -11,6 +11,7 @@ const useStyles = createUseStyles({
     app: {
         fontFamily: YanoneKaffeesatz,
         fontSize: "20px",
+        minHeight: "100%",
     },
 });
 
