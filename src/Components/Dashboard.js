@@ -140,7 +140,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                     {rooms.map((room, index) => (
-                        <NavLink exact to={`/game?id=${room.id}&name=${userName}`} style={{backgroundColor: colors[index % colors.length]}} className={classes.gameBox}>
+                        <NavLink exact to={`/game?id=${room.id}&name=${userName}`} key={room.id} style={{backgroundColor: colors[index % colors.length]}} className={classes.gameBox}>
                             <div className={classes.roomName}>{room.name}</div>
                             <div className={classes.roomJoinButton}>Join </div>
                         </NavLink>

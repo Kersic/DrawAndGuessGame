@@ -20,15 +20,9 @@ function App() {
     return (
         <div className={classes.app}>
             <Switch>
-                <Route exact path="/login">
-                    <Login />
-                </Route>
-                <Route exact path="/">
-                    <Dashboard />
-                </Route>
-                <Route path="/game">
-                    <Game />
-                </Route>
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/" component={Dashboard} />
+                <Route path="/game" component={Game} />
             </Switch>
         </div>
     );
