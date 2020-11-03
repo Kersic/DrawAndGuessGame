@@ -1,6 +1,6 @@
 import React from 'react';
 import {createUseStyles} from "react-jss";
-import {blue, center, LuckiestGuy, red, shadowButtonRight, textShadow, white} from "../mixins";
+import {blue, center, LuckiestGuy, red, shadowButtonRight, white} from "../mixins";
 
 const useStyles = createUseStyles({
     messageBox: {
@@ -35,7 +35,7 @@ const Message = ({name, message}) => {
     const classes = useStyles();
     return (
         <div className={classes.messageBox} style={{flexDirection: name === "Tadeja" ? "row-reverse" : "row"}}>
-            <div  style={{backgroundColor: name === "Tadeja" ? red : blue}} className={classes.name}>{name.slice(0,2)}</div>
+            {name && <div  style={{backgroundColor: name === "Tadeja" ? red : blue}} className={classes.name}>{name.slice(0,2)}</div>}
             <div className={classes.message}>{message}</div>
         </div>
     )

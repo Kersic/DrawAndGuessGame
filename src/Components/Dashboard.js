@@ -7,7 +7,7 @@ import {
     cornerRadius, lightOrange,
     LuckiestGuy,
     orange,
-    red, shadowAllDirections, shadowButtonRight, textShadow,
+    red, shadowAllDirections, textShadow,
     white
 } from "../mixins";
 import RoundedInput from "./RoundedInput";

@@ -2,16 +2,12 @@ import React, {useEffect, useState} from "react";
 import {createUseStyles} from "react-jss";
 import {
     belowBreakpoint,
-    black,
-    blue,
-    breakpoint2,
-    breakpoint4, breakpoint5,
+    breakpoint4,
     center,
     cornerRadius,
     shadowAllDirections,
     white
 } from "../mixins";
-import { Stage, Layer, Line, Text, Image } from 'react-konva';
 import CanvasDraw from "react-canvas-draw";
 
 const useStyles = createUseStyles({
@@ -25,7 +21,6 @@ const useStyles = createUseStyles({
         borderTopLeftRadius: cornerRadius,
         borderBottomLeftRadius: cornerRadius,
         boxShadow: shadowAllDirections,
-        //padding: "40px",
         ...center,
     },
 });
@@ -40,7 +35,7 @@ const DrawingPanel = () => {
        } else {
            setCanvasSize(window.innerHeight > breakpoint4 ? window.innerHeight * 0.8 : window.innerHeight * 0.8);
        }
-    })
+    }, [])
 
     //https://www.npmjs.com/package/react-canvas-draw
     //https://embiem.github.io/react-canvas-draw/

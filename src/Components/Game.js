@@ -131,7 +131,7 @@ const useStyles = createUseStyles({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-
+        cursor: "pointer"
     },
     scoreWrapper: {
         marginTop: `-${chatWrapperSize / 2}px`,
@@ -146,15 +146,15 @@ const Game = ({location}) => {
     const classes = useStyles();
     const [roomId, setRoomId] = useState(null);
     const [username, setUsername] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [message, setMessage] = useState([]);
 
     useEffect(() => {
         const { id, name } = queryString.parse(location.search);
         setRoomId(id);
-        setUsername("tadeja");
-
+        setUsername(name);
         socket = io(serverURL);
-
-        socket.emit('join', { name, roomId }, (error) => {
+        socket.emit('join', { name:name, roomId:id }, (error) => {
             if(error) {
                 alert(error);
             }
@@ -162,9 +162,21 @@ const Game = ({location}) => {
 
         console.log(socket);
 
-        console.log(name);
-        console.log(id);
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        socket.on('message', message => {
+            console.log(message);
+            setMessages(messages => [ ...messages, message ]);
+        });
+    }, []);
+
+    const sendMessage = (event) => {
+        event.preventDefault();
+        if(message) {
+            socket.emit('sendMessage', message, () => setMessage(''));
+        }
+    }
 
     return (
         <div className={classes.background}>
@@ -190,11 +202,11 @@ const Game = ({location}) => {
 
             <div className={classes.rightColumn}>
                 <div className={classes.chatWrapper}>
-                   <Chat />
+                   <Chat messages={messages} />
                 </div>
                 <div className={classes.chatInputWrapper}>
-                    <RoundedInput placeholder={"Write answer..."} />
-                    <div className={classes.sendButton}>
+                    <RoundedInput value={message} setValue={setMessage} placeholder={"Write answer..."} />
+                    <div className={classes.sendButton} onClick={sendMessage}>
                         ᗌ
                     </div>
                 </div>
