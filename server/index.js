@@ -2,17 +2,19 @@ const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 const cors = require('cors');
+const defaultRouter = require('./Routes/defaultRouter');
+const userRouter = require('./Routes/userRouter');
+const {databaseCredentials} = require("./config");
 
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
-
-const router = require('./Routes/defaultRouter');
+const { addUser, removeUser, getUser } = require('./users');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
 app.use(cors());
-app.use(router);
+app.use(defaultRouter);
+app.use('/user', userRouter);
 
 io.on('connect', (socket) => {
     socket.on('join', ({ name, roomId }, callback) => {
@@ -41,5 +43,11 @@ io.on('connect', (socket) => {
         }
     })
 });
+
+var mongoose = require('mongoose');
+mongoose.connect( process.env.MONGODB_URI || databaseCredentials,
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    () => console.log('Connected to DB'));
+mongoose.Promise = global.Promise;
 
 server.listen(process.env.PORT || 5000, () => console.log(`Server has started.`));

@@ -1,1 +1,1 @@
-export const serverURL = 'https://scoketio-chat-app.herokuapp.com/';//'http://localhost:5000/';
+export const serverURL = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:5000/' : 'https://scoketio-chat-app.herokuapp.com/';
