@@ -53,8 +53,12 @@ function useAuth() {
         history.push('/login');
     }
 
+    const getToken = () => {
+        return sessionStorage.getItem('token');
+    }
+
     const isLoggedIn = !!sessionStorage.getItem('token');
 
-    return {login, register, logout, isLoggedIn};
+    return {login, register, logout, getToken, isLoggedIn};
 }
 export default useAuth;

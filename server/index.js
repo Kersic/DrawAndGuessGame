@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const defaultRouter = require('./Routes/defaultRouter');
 const userRouter = require('./Routes/userRouter');
 const {databaseCredentials} = require("./config");
+const {getDataFromToken} = require("./helperFunctions");
 
 const { addUser, removeUser, getUser } = require('./users');
 
@@ -19,17 +20,26 @@ app.use(defaultRouter);
 app.use('/user', userRouter);
 
 io.on('connect', (socket) => {
-    socket.on('join', ({ name, roomId }, callback) => {
+    socket.on('join', ({ roomId, token }, callback) => {
         console.log("user joined");
-        const { error, user } = addUser({ id: socket.id, name, roomId });
+        console.log(roomId);
+        console.log(token);
+        getDataFromToken(token, (tokenData) => {
+            console.log(tokenData.user);
+            const { error, user } = addUser({ id: socket.id, name: tokenData.user.username, roomId });
 
-        if(error) return callback(error);
-        socket.join(user.room);
+            if(error) return callback(error);
+            socket.join(user.room);
 
-        socket.emit('message', { user: null, text: `Welcome ${user.name}!`});
-        socket.broadcast.to(user.room).emit('message', { user: null, text: `${user.name} has joined!` });
+            socket.emit('message', { user: null, text: `Welcome ${user.name}!`});
+            socket.broadcast.to(user.room).emit('message', { user: null, text: `${user.name} has joined!` });
 
-        callback();
+            callback();
+        }, (err) => {
+            return callback(err);
+        });
+
+
     });
 
     socket.on('sendMessage', (message, callback) => {
@@ -39,6 +49,7 @@ io.on('connect', (socket) => {
     });
 
     socket.on('disconnect', () => {
+        console.log("user has left");
         const user = removeUser(socket.id);
         if(user) {
             io.to(user.room).emit('message', { user: null, text: `${user.name} has left.` });

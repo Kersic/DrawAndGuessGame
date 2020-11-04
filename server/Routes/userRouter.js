@@ -45,7 +45,7 @@ router.post('/register', async (req, res) => {
     });
     tag.save()
         .then(user => {
-            jwt.sign({user: user}, jwtSign, {expiresIn: '8h'}, (err, token) =>{
+            jwt.sign({user: {_id: user._id, username: user.username}}, jwtSign, {expiresIn: '8h'}, (err, token) =>{
                 res.json({message:'success', token:token, user:user});
             });
         })
@@ -66,7 +66,7 @@ router.post('/login', (req, res) => {
             console.log(err);
             res.status(500).json(err);
         }else {
-            jwt.sign({user: user}, jwtSign, {expiresIn: '8h'}, (err, token) =>{
+            jwt.sign({user: {_id: user._id, username: user.username}}, jwtSign, {expiresIn: '8h'}, (err, token) =>{
                 res.json({message:'success', token:token, user:user});
             });
         }

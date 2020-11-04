@@ -1,12 +1,12 @@
 const {jwtSign} = require("./config");
 const jwt = require('jsonwebtoken');
 
-const getDataFromToken = (token) => {
+const getDataFromToken = (token, callback, onError) => {
     jwt.verify(token, jwtSign,(err, authData) => {
         if (err)
-            return null;
+            onError("unauthorized user");
         else {
-            return authData;
+            callback(authData);
         }
     });
 }
@@ -31,4 +31,4 @@ const verifyToken = (req, res, next) => {
     }
 }
 
-module.exports = {verifyToken}
+module.exports = {verifyToken, getDataFromToken}

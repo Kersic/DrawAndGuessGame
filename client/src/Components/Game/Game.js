@@ -16,6 +16,7 @@ import RoundedInput from "../RoundedInput";
 import DrawingPanel from "./DrawingPanel";
 import {serverURL} from "../../config";
 import Chat from "../Chat/Chat";
+import useAuth from "../../Hooks/useAuth";
 
 const chatWrapperSize = 50;
 const infoBoxSizes = 70;
@@ -144,18 +145,19 @@ let socket;
 
 const Game = ({location}) => {
     const classes = useStyles();
-    const [roomId, setRoomId] = useState(null);
-    const [username, setUsername] = useState(null);
+    const {getToken, logout} = useAuth();
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState([]);
 
     useEffect(() => {
-        const { id, name } = queryString.parse(location.search);
-        setRoomId(id);
-        setUsername(name);
+        const { id } = queryString.parse(location.search);
         socket = io(serverURL);
-        socket.emit('join', { name:name, roomId:id }, (error) => {
+        socket.emit('join', { roomId:id, token:getToken() }, (error) => {
             if(error) {
+                if(error === 'unauthorized user') {
+                    logout();
+                    return;
+                }
                 alert(error);
             }
         });
