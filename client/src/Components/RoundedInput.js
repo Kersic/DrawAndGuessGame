@@ -1,6 +1,6 @@
 import React from 'react';
 import {createUseStyles} from "react-jss";
-import {black, white} from "../mixins";
+import {black, textShadow, white} from "../mixins";
 
 const useStyles = createUseStyles({
     roundedInput: {
@@ -12,6 +12,7 @@ const useStyles = createUseStyles({
         width: "-webkit-fill-available",
         height: "30px",
         paddingLeft: "10px",
+        boxShadow: textShadow,
         "&:focus": {
             outline: "none",
         }

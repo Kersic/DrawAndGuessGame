@@ -62,7 +62,7 @@ router.post('/login', (req, res) => {
             console.log(err);
             res.status(500).json(err);
         }else {
-            jwt.sign({user: user}, jwtSign, {expiresIn: '2 days'}, (err, token) =>{
+            jwt.sign({user: user}, jwtSign, {expiresIn: '8h'}, (err, token) =>{
                 res.json({message:'success', token:token, user:user});
             });
         }

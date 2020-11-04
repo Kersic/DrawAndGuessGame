@@ -4,8 +4,10 @@ import {YanoneKaffeesatz} from "./mixins";
 import { createUseStyles } from 'react-jss';
 import {Switch, Route} from "react-router-dom";
 import Login from "./Components/Login";
+import Register from "./Components/Register";
 import Dashboard from "./Components/Dashboard";
 import Game from "./Components/Game";
+import PrivateRoute from "./Components/PriveteRoute";
 
 const useStyles = createUseStyles({
     app: {
@@ -21,8 +23,9 @@ function App() {
         <div className={classes.app}>
             <Switch>
                 <Route exact path="/login" component={Login} />
-                <Route exact path="/" component={Dashboard} />
-                <Route path="/game" component={Game} />
+                <Route exact path="/register" component={Register} />
+                <PrivateRoute path="/game" component={Game} />
+                <PrivateRoute path="/" component={Dashboard} />
             </Switch>
         </div>
     );
