@@ -1,1 +1,1 @@
-export const serverURL = 'http://localhost:5000/';
+export const serverURL = 'https://scoketio-chat-app.herokuapp.com/';//'http://localhost:5000/';
