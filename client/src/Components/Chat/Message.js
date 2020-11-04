@@ -1,6 +1,7 @@
 import React from 'react';
 import {createUseStyles} from "react-jss";
 import {blue, center, LuckiestGuy, red, shadowButtonRight, white} from "../../mixins";
+import useAuth from "../../Hooks/useAuth";
 
 const useStyles = createUseStyles({
     messageBox: {
@@ -33,9 +34,10 @@ const useStyles = createUseStyles({
 
 const Message = ({name, message}) => {
     const classes = useStyles();
+    const {getUsername} = useAuth();
     return (
-        <div className={classes.messageBox} style={{flexDirection: name === "Tadeja" ? "row-reverse" : "row"}}>
-            {name && <div  style={{backgroundColor: name === "Tadeja" ? red : blue}} className={classes.name}>{name.slice(0,2)}</div>}
+        <div className={classes.messageBox} style={{flexDirection: name === getUsername() ? "row-reverse" : "row"}}>
+            {name && <div  style={{backgroundColor: name === getUsername() ? red : blue}} className={classes.name}>{name.slice(0,2)}</div>}
             <div className={classes.message}>{message}</div>
         </div>
     )

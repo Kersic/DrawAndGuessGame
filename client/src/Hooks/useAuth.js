@@ -21,6 +21,7 @@ function useAuth() {
             (data) => {
                 console.log(data);
                 sessionStorage.setItem('token', data.token);
+                sessionStorage.setItem('username', data.user?.username);
                 history.push('/')
             },
             (err) => {
@@ -40,6 +41,7 @@ function useAuth() {
             setIsLoading,
             (data) => {
                 sessionStorage.setItem('token', data.token);
+                sessionStorage.setItem('username', data.user?.username);
                 history.push('/');
             },
             (err) => {
@@ -50,6 +52,7 @@ function useAuth() {
 
     const logout = () => {
         sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
         history.push('/login');
     }
 
@@ -57,8 +60,12 @@ function useAuth() {
         return sessionStorage.getItem('token');
     }
 
+    const getUsername = () => {
+        return sessionStorage.getItem('username');
+    }
+
     const isLoggedIn = !!sessionStorage.getItem('token');
 
-    return {login, register, logout, getToken, isLoggedIn};
+    return {login, register, logout, getToken, getUsername, isLoggedIn};
 }
 export default useAuth;
