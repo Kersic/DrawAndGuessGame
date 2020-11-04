@@ -7,7 +7,7 @@ import {
     cornerRadius,
     shadowAllDirections,
     white
-} from "../mixins";
+} from "../../mixins";
 import CanvasDraw from "react-canvas-draw";
 
 const useStyles = createUseStyles({

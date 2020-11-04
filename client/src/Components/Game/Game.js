@@ -11,11 +11,11 @@ import {
     lightOrange, LuckiestGuy,
     orange, red, shadowAllDirections, shadowButtonLeft, shadowButtonRight, shadowTopLeft,
     white,
-} from "../mixins";
-import RoundedInput from "./RoundedInput";
+} from "../../mixins";
+import RoundedInput from "../RoundedInput";
 import DrawingPanel from "./DrawingPanel";
-import {serverURL} from "../config";
-import Chat from "./Chat";
+import {serverURL} from "../../config";
+import Chat from "../Chat/Chat";
 
 const chatWrapperSize = 50;
 const infoBoxSizes = 70;

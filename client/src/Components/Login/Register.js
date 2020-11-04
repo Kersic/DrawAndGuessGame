@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {createUseStyles} from "react-jss";
-import RoundedInput from "./RoundedInput";
+import RoundedInput from "../RoundedInput";
 import {loginStyles} from "./Login";
 import {NavLink} from "react-router-dom";
-import {AlertContext} from "../Contexts/AlertProvider";
-import useAuth from "../Hooks/useAuth";
+import {AlertContext} from "../../Contexts/AlertProvider";
+import useAuth from "../../Hooks/useAuth";
 
 const useStyles = createUseStyles(loginStyles);
 

@@ -8,11 +8,11 @@ import {
     lightOrange,
     LuckiestGuy, red, textShadow,
     white,
-} from "../mixins";
-import RoundedInput from "./RoundedInput";
+} from "../../mixins";
+import RoundedInput from "../RoundedInput";
 import { NavLink } from "react-router-dom";
-import useAuth from "../Hooks/useAuth";
-import {AlertContext} from "../Contexts/AlertProvider";
+import useAuth from "../../Hooks/useAuth";
+import {AlertContext} from "../../Contexts/AlertProvider";
 
 export const loginStyles = {
     background: {

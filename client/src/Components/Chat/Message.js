@@ -1,6 +1,6 @@
 import React from 'react';
 import {createUseStyles} from "react-jss";
-import {blue, center, LuckiestGuy, red, shadowButtonRight, white} from "../mixins";
+import {blue, center, LuckiestGuy, red, shadowButtonRight, white} from "../../mixins";
 
 const useStyles = createUseStyles({
     messageBox: {

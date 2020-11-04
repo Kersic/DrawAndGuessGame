@@ -3,11 +3,11 @@ import './App.css'
 import {YanoneKaffeesatz} from "./mixins";
 import { createUseStyles } from 'react-jss';
 import {Switch, Route} from "react-router-dom";
-import Login from "./Components/Login";
-import Register from "./Components/Register";
+import Login from "./Components/Login/Login";
+import Register from "./Components/Login/Register";
 import Dashboard from "./Components/Dashboard";
-import Game from "./Components/Game";
-import PrivateRoute from "./Components/PriveteRoute";
+import Game from "./Components/Game/Game";
+import PrivateRoute from "./Components/Login/PriveteRoute";
 
 const useStyles = createUseStyles({
     app: {
