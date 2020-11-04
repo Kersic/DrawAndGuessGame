@@ -44,7 +44,11 @@ router.post('/register', async (req, res) => {
         numberOfWins: 0,
     });
     tag.save()
-        .then(data => {res.json(data)})
+        .then(user => {
+            jwt.sign({user: user}, jwtSign, {expiresIn: '8h'}, (err, token) =>{
+                res.json({message:'success', token:token, user:user});
+            });
+        })
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
@@ -56,7 +60,7 @@ router.post('/login', (req, res) => {
     console.log("POST user/login");
     userModel.authenticate(req.body.email, req.body.password, function (err, user) {
         if (!user) {
-            res.json({message:'Wrong username or password'});
+            res.status(500).json({message:'Wrong username or password'});
         }
         else if(err){
             console.log(err);

@@ -1,17 +1,17 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {createUseStyles} from "react-jss";
 import {
     belowBreakpoint, black,
     blue, breakpoint2,
-    breakpoint4, classNames,
+    breakpoint4, center, classNames,
     cornerRadius, lightOrange,
     LuckiestGuy,
     orange,
-    red, shadowAllDirections, textShadow,
+    red, shadowAllDirections, shadowButtonRight, textShadow,
     white
 } from "../mixins";
-import RoundedInput from "./RoundedInput";
 import { NavLink } from "react-router-dom";
+import useAuth from "../Hooks/useAuth";
 
 
 const useStyles = createUseStyles({
@@ -95,12 +95,27 @@ const useStyles = createUseStyles({
     addRoom: {
         fontSize: "70px",
     },
+    logout: {
+        backgroundColor: blue,
+        ...center,
+        fontFamily: LuckiestGuy,
+        color: white,
+        boxShadow: shadowButtonRight,
+        paddingTop: "2px",
+        fontSize: "15px",
+        margin: "20px 20px 0 0",
+        width: "30px",
+        height: "30px",
+        borderRadius: "20px",
+        alignSelf: "flex-end",
+        cursor: "pointer"
+    }
 });
 
 
 const Dashboard = () => {
     const classes = useStyles();
-    const [userName, setUsername] = useState("");
+    const {logout} = useAuth();
     const colors = [orange, red, blue];
     const rooms = [
         {
@@ -128,10 +143,8 @@ const Dashboard = () => {
     return (
         <div className={classes.background} >
             <div className={classes.paper}>
+                <div className={classes.logout} onClick={logout}>X</div>
                 <div className={classes.title}>DRAW AND GUESS</div>
-                <div>
-                    <RoundedInput value={userName} setValue={setUsername} placeholder={"Username..."} />
-                </div>
 
                 <div className={classes.gamesWrapper}>
                     <div className={classes.gameBox}>
@@ -140,7 +153,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                     {rooms.map((room, index) => (
-                        <NavLink exact to={`/game?id=${room.id}&name=${userName}`} key={room.id} style={{backgroundColor: colors[index % colors.length]}} className={classes.gameBox}>
+                        <NavLink exact to={`/game?id=${room.id}`} key={room.id} style={{backgroundColor: colors[index % colors.length]}} className={classes.gameBox}>
                             <div className={classes.roomName}>{room.name}</div>
                             <div className={classes.roomJoinButton}>Join </div>
                         </NavLink>

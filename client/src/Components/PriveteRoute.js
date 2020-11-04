@@ -1,9 +1,10 @@
 import React from 'react'
 import { Redirect, Route } from 'react-router-dom'
+import useAuth from "../Hooks/useAuth";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
 
-    const isLoggedIn = false;//AuthService.isLoggedIn()
+    const {isLoggedIn} = useAuth();
 
     return (
         <Route

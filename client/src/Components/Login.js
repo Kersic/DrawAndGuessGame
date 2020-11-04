@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import {createUseStyles} from "react-jss";
 import {
     belowBreakpoint, blue, breakpoint2,
@@ -11,6 +11,8 @@ import {
 } from "../mixins";
 import RoundedInput from "./RoundedInput";
 import { NavLink } from "react-router-dom";
+import useAuth from "../Hooks/useAuth";
+import {AlertContext} from "../Contexts/AlertProvider";
 
 export const loginStyles = {
     background: {
@@ -36,6 +38,7 @@ export const loginStyles = {
             width: "90%",
         }),
         overflow: "hidden",
+        boxShadow: textShadow,
     },
     title: {
         fontFamily: LuckiestGuy,
@@ -73,6 +76,11 @@ export const loginStyles = {
         fontFamily: LuckiestGuy,
         textShadow: textShadow,
         cursor: "pointer",
+    },
+    alert: {
+        color: blue,
+        fontFamily: LuckiestGuy,
+        textShadow: textShadow,
     }
 };
 
@@ -82,19 +90,39 @@ const Login = () => {
     const classes = useStyles();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const {login} = useAuth();
+    const { alert, setAlert } = useContext(AlertContext);
+
+    useEffect(() => {
+        setAlert("");
+    }, [])
+
+    const handleLogin = () => {
+        if(!email) {
+            setAlert("Enter email");
+            return;
+        }
+        else if(!password) {
+            setAlert("Enter password");
+            return;
+        }
+        login(email, password);
+    }
+
     return (
         <div className={classes.background}>
             <div className={classes.paper}>
                 <div className={classes.title}>LOGIN</div>
+                <div className={classes.alert}>{alert.toUpperCase()}</div>
                 <div className={classes.input}>
                     <div>EMAIL</div>
-                    <RoundedInput value={email} setValue={setEmail}  />
+                    <RoundedInput type={"email"} value={email} setValue={setEmail}  />
                 </div>
                 <div className={classes.input}>
                     <div>PASSWORD</div>
-                    <RoundedInput value={password} setValue={setPassword} />
+                    <RoundedInput type={"password"} value={password} setValue={setPassword} />
                 </div>
-                <div className={classes.button}>
+                <div className={classes.button} onClick={handleLogin}>
                     LOGIN
                 </div>
                 <NavLink to={'/register'} className={classes.textButton}>REGISTER</NavLink>
