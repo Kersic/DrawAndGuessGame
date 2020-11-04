@@ -45,7 +45,7 @@ const Login = () => {
         <div className={classes.background}>
             <div className={classes.paper}>
                 <div className={classes.title}>REGISTER</div>
-                <div className={classes.alert}>{alert.toUpperCase()}</div>
+                {alert && typeof alert === "string" && <div className={classes.alert}>{alert.toUpperCase()}</div>}
                 <div className={classes.input}>
                     <div>EMAIL</div>
                     <RoundedInput value={email} setValue={setEmail}  />

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {createUseStyles} from "react-jss";
 import {
     belowBreakpoint, black,
@@ -9,10 +9,11 @@ import {
     orange,
     red, shadowAllDirections, shadowButtonRight, textShadow,
     white
-} from "../mixins";
+} from "../../mixins";
 import { NavLink } from "react-router-dom";
-import useAuth from "../Hooks/useAuth";
-
+import useAuth from "../../Hooks/useAuth";
+import RoomForm from "./RoomForm";
+import useRooms from "../../Hooks/useRooms";
 
 const useStyles = createUseStyles({
     background: {
@@ -49,9 +50,9 @@ const useStyles = createUseStyles({
     gamesWrapper: {
         width: "90%",
         display: "grid",
-        gridTemplateColumns: "auto auto auto auto",
+        gridTemplateColumns: "1fr 1fr 1fr 1fr",
         ...belowBreakpoint(breakpoint2, {
-            gridTemplateColumns: "auto auto ",
+            gridTemplateColumns: "1fr 1fr ",
         }),
         ...belowBreakpoint(breakpoint4, {
             gridTemplateColumns: "auto ",
@@ -60,7 +61,7 @@ const useStyles = createUseStyles({
     },
     gameBox: {
         backgroundColor: blue,
-        margin: "10%",
+        margin: "25px",
         height: "200px",
         borderRadius: cornerRadius,
         display: "flex",        flexDirection: "column",
@@ -76,12 +77,14 @@ const useStyles = createUseStyles({
         cursor: "pointer",
         textDecoration: "none",
         color: black,
+        overflow: "auto",
     },
     roomName: {
         fontFamily: LuckiestGuy,
         fontSize: "30px",
         color: white,
         textShadow: textShadow,
+        textTransform: "uppercase"
     },
     roomJoinButton: {
         backgroundColor: white,
@@ -92,11 +95,8 @@ const useStyles = createUseStyles({
             boxShadow: "1px 1px 1px gray",
         }
     },
-    addRoom: {
-        fontSize: "70px",
-    },
     logout: {
-        backgroundColor: blue,
+        backgroundColor: orange,
         ...center,
         fontFamily: LuckiestGuy,
         color: white,
@@ -109,6 +109,20 @@ const useStyles = createUseStyles({
         borderRadius: "20px",
         alignSelf: "flex-end",
         cursor: "pointer"
+    },
+    roomUsers: {
+        fontFamily: LuckiestGuy,
+        fontSize: "20px",
+        color: white,
+        textShadow: textShadow,
+        margin: "0 20px"
+    },
+    disabled: {
+        cursor: "default",
+        opacity: "0.5",
+        "&:hover": {
+            boxShadow: "1px 1px 1px gray",
+        }
     }
 });
 
@@ -117,28 +131,9 @@ const Dashboard = () => {
     const classes = useStyles();
     const {logout} = useAuth();
     const colors = [orange, red, blue];
-    const rooms = [
-        {
-            id: 1,
-            name: 'Room 1',
-        },
-        {
-            id: 2,
-            name: 'Room 2',
-        },
-        {
-            id: 3,
-            name: 'Room 3',
-        },
-        {
-            id: 4,
-            name: 'Room 4',
-        },
-        {
-            id: 5,
-            name: 'Room 5',
-        },
-    ]
+    const [addingNewRoom, setAddingNewRoom] = useState(false);
+    const {rooms} = useRooms();
+
 
     return (
         <div className={classes.background} >
@@ -147,15 +142,14 @@ const Dashboard = () => {
                 <div className={classes.title}>DRAW AND GUESS</div>
 
                 <div className={classes.gamesWrapper}>
-                    <div className={classes.gameBox}>
-                        <div className={classNames(classes.roomName, classes.addRoom)}>
-                            +
-                        </div>
+                    <div className={classes.gameBox} onClick={()=> !addingNewRoom ? setAddingNewRoom(true) : null}>
+                        <RoomForm setAddingNewRoom={setAddingNewRoom} addingNewRoom={addingNewRoom} />
                     </div>
                     {rooms.map((room, index) => (
-                        <NavLink exact to={`/game?id=${room.id}`} key={room.id} style={{backgroundColor: colors[index % colors.length]}} className={classes.gameBox}>
+                        <NavLink exact to={`/waiting-lobby?id=${room.id}`} key={room.id} style={{backgroundColor: colors[index % colors.length]}} className={classes.gameBox}>
                             <div className={classes.roomName}>{room.name}</div>
-                            <div className={classes.roomJoinButton}>Join </div>
+                            <div className={classes.roomUsers}>{room.users.length + "/8" }</div>
+                            <div className={classNames(classes.roomJoinButton, room.hasStarted ? classes.disabled : "")}>Join </div>
                         </NavLink>
                     ))}
                 </div>

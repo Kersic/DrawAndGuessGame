@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser')
 const defaultRouter = require('./Routes/defaultRouter');
 const userRouter = require('./Routes/userRouter');
+const roomRouter = require('./Routes/roomRouter');
 const {databaseCredentials} = require("./config");
 const {getDataFromToken} = require("./helperFunctions");
 
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(defaultRouter);
 app.use('/user', userRouter);
+app.use('/rooms', roomRouter);
 
 io.on('connect', (socket) => {
     socket.on('join', ({ roomId, token }, callback) => {
@@ -38,8 +40,6 @@ io.on('connect', (socket) => {
         }, (err) => {
             return callback(err);
         });
-
-
     });
 
     socket.on('sendMessage', (message, callback) => {

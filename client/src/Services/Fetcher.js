@@ -1,32 +1,38 @@
 import axios from "axios";
 
-export const httpGet = (url, setIsLoading, callback) => {
-    setIsLoading(true);
+export const httpGet = (url, token, setIsLoading, callback) => {
+    if(setIsLoading) setIsLoading(true);
     axios({
         method: 'get',
         url: url,
+        headers: token ? {
+            'Authorization': token
+        } : null,
     }).then(res =>{
-        setIsLoading(false);
+        if(setIsLoading) setIsLoading(false);
         callback(res.data);
     }).catch(err => {
-        setIsLoading(false);
+        if(setIsLoading) setIsLoading(false);
         console.log(err)
     });
 }
 
-export const httpPost = (url, data, setIsLoading, callback, onError) => {
+export const httpPost = (url, token, data, setIsLoading, callback, onError) => {
     setIsLoading(true);
     axios({
         method: 'post',
         url: url,
-        data: data
+        data: data,
+        headers: token ? {
+            'Authorization': token
+        } : null,
     }).then(res =>{
         setIsLoading(false);
         if(callback) callback(res.data);
     }).catch(err => {
         setIsLoading(false);
-        if(onError) onError(err.response.data.message);
-        console.log(err.response.data.message)
+        if(onError && err?.response?.data?.message) onError(err.response.data.message);
+        else alert(err);
     });
 }
 

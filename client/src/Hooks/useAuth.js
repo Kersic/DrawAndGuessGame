@@ -8,11 +8,12 @@ import {AlertContext} from "../Contexts/AlertProvider";
 function useAuth() {
     const { setIsLoading } = useContext(LoaderContext);
     const { setAlert } = useContext(AlertContext);
-    let history = useHistory()
+    let history = useHistory();
 
     const login = (email, password) => {
         httpPost(
             serverURL + "user/login",
+            null,
             {
                 email,
                 password
@@ -33,6 +34,7 @@ function useAuth() {
     const register = (email, username, password) => {
         httpPost(
             serverURL + "user/register",
+            null,
             {
                 email,
                 username,

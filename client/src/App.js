@@ -5,9 +5,10 @@ import { createUseStyles } from 'react-jss';
 import {Switch, Route} from "react-router-dom";
 import Login from "./Components/Login/Login";
 import Register from "./Components/Login/Register";
-import Dashboard from "./Components/Dashboard";
+import Dashboard from "./Components/Dashboard/Dashboard";
 import Game from "./Components/Game/Game";
 import PrivateRoute from "./Components/Login/PriveteRoute";
+import WaitingLobby from "./Components/Game/WaitingLobby";
 
 const useStyles = createUseStyles({
     app: {
@@ -25,6 +26,7 @@ function App() {
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/register" component={Register} />
                 <PrivateRoute path="/game" component={Game} />
+                <PrivateRoute path="/waiting-lobby" component={WaitingLobby} />
                 <PrivateRoute path="/" component={Dashboard} />
             </Switch>
         </div>

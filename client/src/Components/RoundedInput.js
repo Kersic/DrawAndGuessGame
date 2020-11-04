@@ -1,6 +1,6 @@
 import React from 'react';
 import {createUseStyles} from "react-jss";
-import {black, textShadow, white} from "../mixins";
+import {black, center, textShadow, white} from "../mixins";
 
 const useStyles = createUseStyles({
     roundedInput: {
@@ -15,14 +15,15 @@ const useStyles = createUseStyles({
         boxShadow: textShadow,
         "&:focus": {
             outline: "none",
-        }
+        },
+        textAlign: "center"
     },
 });
 
 export const RoundedInput = ({value, setValue, placeholder, type}) => {
     const classes = useStyles();
     return (
-        <input type={type?type:"text"} value={value} onChange={(e) => setValue(e.target.value)} className={classes.roundedInput} placeholder={placeholder} autoComplete={true}/>
+        <input type={type?type:"text"} value={value} onChange={(e) => setValue(e.target.value)} className={classes.roundedInput} placeholder={placeholder} autoComplete={"on"}/>
     )
 }
 

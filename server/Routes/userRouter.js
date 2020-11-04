@@ -11,15 +11,15 @@ router.post('/register', async (req, res) => {
         res.status(500).json({message:"email is required"});
         return;
     }
-    if(!req.body.username) {
+    else if(!req.body.username) {
         res.status(500).json({message:"username is required"});
         return;
     }
-    if(!req.body.password) {
+    else if(!req.body.password) {
         res.status(500).json({message:"password is required"});
         return;
     }
-    if(req.body.password.length < 8) {
+    else if(req.body.password.length < 8) {
         res.status(500).json({message:"password should have 8 characters"});
         return;
     }

@@ -13,9 +13,8 @@ const getDataFromToken = (token, callback, onError) => {
 
 const verifyToken = (req, res, next) => {
     const bearerHeader = req.headers['authorization'];
-    console.log(bearerHeader)
     if(typeof bearerHeader !== 'undefined'){
-        req.token = bearerHeader.split(' ')[1];
+        req.token = bearerHeader;
         jwt.verify(req.token, jwtSign,(err, authData) => {
             if (err)
                 res.sendStatus(403);
