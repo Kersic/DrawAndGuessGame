@@ -2,6 +2,7 @@ const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 const cors = require('cors');
+const bodyParser = require('body-parser')
 const defaultRouter = require('./Routes/defaultRouter');
 const userRouter = require('./Routes/userRouter');
 const {databaseCredentials} = require("./config");
@@ -13,6 +14,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 app.use(cors());
+app.use(bodyParser.json());
 app.use(defaultRouter);
 app.use('/user', userRouter);
 
