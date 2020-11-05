@@ -8,7 +8,7 @@ const addUser = ({ id, name, roomId }) => {
   if(existingUser) return { error: 'Username is taken.' };
 
   const user = { id, name, roomId };
-
+z
   users.push(user);
 
   return { user };

@@ -8,8 +8,11 @@ const userRouter = require('./Routes/userRouter');
 const roomRouter = require('./Routes/roomRouter');
 const {databaseCredentials} = require("./config");
 const {getDataFromToken} = require("./helperFunctions");
+const userModel = require('./Models/user');
 
-const { addUser, removeUser, getUser } = require('./users');
+//const { addUser, removeUser, getUser } = require('./users');
+
+const {addUserInRoom, removeUserFromRoom, setUserInactive} = require('./rooms');
 
 const app = express();
 const server = http.createServer(app);
@@ -24,36 +27,45 @@ app.use('/rooms', roomRouter);
 io.on('connect', (socket) => {
     socket.on('join', ({ roomId, token }, callback) => {
         console.log("user joined");
-        console.log(roomId);
-        console.log(token);
         getDataFromToken(token, (tokenData) => {
-            console.log(tokenData.user);
-            const { error, user } = addUser({ id: socket.id, name: tokenData.user.username, roomId });
+            userModel.findOne({_id: tokenData.user._id})
+                .then(user => {
+                    const { userRoom, error } = addUserInRoom(socket.id, user, roomId );
+                    if(error) return callback(null, error);
+                    socket.join(userRoom);
+                    callback(null);
+                })
+                .catch(err => {
+                    return callback(null, "User not found");
+                });
 
-            if(error) return callback(error);
-            socket.join(user.room);
+           // socket.emit('message', { user: null, text: `Welcome ${user.name}!`});
+           // socket.broadcast.to(user.roomId).emit('message', { user: null, text: `${user.name} has joined!` });
 
-            socket.emit('message', { user: null, text: `Welcome ${user.name}!`});
-            socket.broadcast.to(user.room).emit('message', { user: null, text: `${user.name} has joined!` });
-
-            callback();
         }, (err) => {
             return callback(err);
         });
     });
 
     socket.on('sendMessage', (message, callback) => {
-        const user = getUser(socket.id);
-        io.to(user.room).emit('message', { user: user.name, text: message });
-        callback();
+        // const user = getUser(socket.id);
+        // io.to(user.room).emit('message', { user: user.name, text: message });
+        // callback();
+    });
+
+    socket.on('leaveRoom', ({roomId, token}, callback) => {
+        console.log("user left room");
+        getDataFromToken(token, (tokenData) => {
+            removeUserFromRoom(tokenData.user._id, roomId);
+            callback();
+        }, (err) => {
+            return callback(err);
+        });
     });
 
     socket.on('disconnect', () => {
-        console.log("user has left");
-        const user = removeUser(socket.id);
-        if(user) {
-            io.to(user.room).emit('message', { user: null, text: `${user.name} has left.` });
-        }
+         console.log("user has left");
+        setUserInactive(socket.id);
     })
 });
 

@@ -12,6 +12,7 @@ router.get('/', verifyToken, (req, res) => {
             users: room.users.map((user) => {return{
                 allPoints: user.allPoints,
                 username: user.username,
+                active: user.active,
             }}),
             hasStarted:room.hasStarted,
         }
@@ -39,7 +40,7 @@ router.post('/', verifyToken, (req, res) => {
                     allPoints: user.points,
                     pointsThisGame: 0,
                     hasPlayed: false,
-                    active: true,
+                    active: false,
                 }],
                 hasStarted:false,
             }

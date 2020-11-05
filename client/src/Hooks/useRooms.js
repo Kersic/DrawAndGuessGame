@@ -25,7 +25,9 @@ const useRooms = () => {
 
     const getRooms = () => {
         httpGet(serverURL + "rooms",  getToken(), null, (rooms) => {
-            if(rooms) setRooms(rooms);
+            if(rooms) {
+                setRooms(rooms)
+            };
         })
     }
 
@@ -36,7 +38,7 @@ const useRooms = () => {
         })
     }
 
-    return {rooms, createRoom};
+    return {rooms, createRoom, getRooms};
 }
 
 export default useRooms;
