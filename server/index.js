@@ -10,9 +10,7 @@ const {databaseCredentials} = require("./config");
 const {getDataFromToken} = require("./helperFunctions");
 const userModel = require('./Models/user');
 
-//const { addUser, removeUser, getUser } = require('./users');
-
-const {addUserInRoom, removeUserFromRoom, setUserInactive} = require('./rooms');
+const {addUserInRoom, removeUserFromRoom, setUserInactive, startGame} = require('./rooms');
 
 const app = express();
 const server = http.createServer(app);
@@ -31,12 +29,12 @@ io.on('connect', (socket) => {
             userModel.findOne({_id: tokenData.user._id})
                 .then(user => {
                     const { userRoom, error } = addUserInRoom(socket.id, user, roomId );
-                    if(error) return callback(null, error);
+                    if(error) return callback(error);
                     socket.join(userRoom);
-                    callback(null);
+                    callback();
                 })
-                .catch(err => {
-                    return callback(null, "User not found");
+                .catch(() => {
+                    return callback("User not found");
                 });
 
            // socket.emit('message', { user: null, text: `Welcome ${user.name}!`});
@@ -56,7 +54,20 @@ io.on('connect', (socket) => {
     socket.on('leaveRoom', ({roomId, token}, callback) => {
         console.log("user left room");
         getDataFromToken(token, (tokenData) => {
-            removeUserFromRoom(tokenData.user._id, roomId);
+            const { error } = removeUserFromRoom(tokenData.user._id, roomId);
+            if(error) return callback(error);
+            callback();
+        }, (err) => {
+            return callback(err);
+        });
+    });
+
+    socket.on('startGame', ({roomId, token}, callback) => {
+        console.log("startGame");
+        getDataFromToken(token, () => {
+            const { error } = startGame(roomId);
+            if(error) return callback(error);
+            io.to(roomId).emit('gameStarted');
             callback();
         }, (err) => {
             return callback(err);
@@ -65,7 +76,7 @@ io.on('connect', (socket) => {
 
     socket.on('disconnect', () => {
          console.log("user has left");
-        setUserInactive(socket.id);
+         setUserInactive(socket.id);
     })
 });
 

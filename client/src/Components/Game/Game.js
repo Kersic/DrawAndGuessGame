@@ -149,35 +149,35 @@ const Game = ({location}) => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState([]);
 
-    useEffect(() => {
-        const { id } = queryString.parse(location.search);
-        socket = io(serverURL);
-        socket.emit('join', { roomId:id, token:getToken() }, (error) => {
-            if(error) {
-                if(error === 'unauthorized user') {
-                    logout();
-                    return;
-                }
-                alert(error);
-            }
-        });
-
-        console.log(socket);
-
-    }, []);
-
-    useEffect(() => {
-        socket.on('message', message => {
-            console.log(message);
-            setMessages(messages => [ ...messages, message ]);
-        });
-    }, []);
+    // useEffect(() => {
+    //     const { id } = queryString.parse(location.search);
+    //     socket = io(serverURL);
+    //     socket.emit('join', { roomId:id, token:getToken() }, (error) => {
+    //         if(error) {
+    //             if(error === 'unauthorized user') {
+    //                 logout();
+    //                 return;
+    //             }
+    //             alert(error);
+    //         }
+    //     });
+    //
+    //     console.log(socket);
+    //
+    // }, []);
+    //
+    // useEffect(() => {
+    //     socket.on('message', message => {
+    //         console.log(message);
+    //         setMessages(messages => [ ...messages, message ]);
+    //     });
+    // }, []);
 
     const sendMessage = (event) => {
-        event.preventDefault();
-        if(message) {
-            socket.emit('sendMessage', message, () => setMessage(''));
-        }
+        // event.preventDefault();
+        // if(message) {
+        //     socket.emit('sendMessage', message, () => setMessage(''));
+        // }
     }
 
     return (

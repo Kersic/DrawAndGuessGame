@@ -101,6 +101,10 @@ const WaitingLobby = ({location}) => {
             getRooms();
         });
 
+        socket.on('gameStarted', () => {
+            console.log("game started");
+            history.push(`/game?id=${id}`);
+        });
         console.log(socket);
     }
 
@@ -115,39 +119,53 @@ const WaitingLobby = ({location}) => {
         });
     }
 
+    const handleStartGame = () => {
+        if((!socket || !socket.connected)) return;
+        socket.emit('startGame', { roomId:id, token:getToken() }, (error) => {
+            if(error) {
+                alert(error);
+                getRooms();
+            }
+        });
+    }
+
     const activeUsers = room.users.filter(u => u.active);
     const isConnected = (socket && socket.connected);
 
     return (
         <BackgroundWrapper title={room.name} backAction={history.goBack}>
-            <div className={classes.message}>{activeUsers.length < 3 ? `Waiting for ${3-activeUsers.length} more players to join` : `Waiting for first player to start game`} </div>
-            <div className={classes.roomDataWrapper}>
-                <div>
-                    <div className={classes.playersTitle}>Players:</div>
+            {room.id &&
+                <>
+                <div className={classes.message}>{activeUsers.length < 3 ? `Waiting for ${3-activeUsers.length} more players to join` : `Waiting for first player to start game`} </div>
+                <div className={classes.roomDataWrapper}>
                     <div>
-                    {activeUsers.map(user =>
-                        <div key={user.username} className={classes.players}>
-                            <div>
-                                {user.username}
+                        <div className={classes.playersTitle}>Players:</div>
+                        <div>
+                        {activeUsers.map(user =>
+                            <div key={user.username} className={classes.players}>
+                                <div>
+                                    {user.username}
+                                </div>
+                                <div>
+                                    {user.allPoints}
+                                </div>
                             </div>
-                            <div>
-                                {user.allPoints}
-                            </div>
+                        )}
                         </div>
-                    )}
+                    </div>
+                    <div>
+                        <div className={classes.button} onClick={isConnected ? handleLeave : handleJoin}>
+                            <div className={classes.buttonText}>{isConnected ? "Leave" : "Join"}</div>
+                        </div>
+                        {activeUsers.length > 2 && getUsername() === activeUsers[0].username && isConnected &&
+                            <div className={classNames(classes.button, classes.startGameButton)} onClick={handleStartGame}>
+                                <div className={classes.buttonText}>{"Start game"}</div>
+                            </div>
+                        }
                     </div>
                 </div>
-                <div>
-                    <div className={classes.button} onClick={isConnected ? handleLeave : handleJoin}>
-                        <div className={classes.buttonText}>{isConnected ? "Leave" : "Join"}</div>
-                    </div>
-                    {activeUsers.length > 2 && getUsername() === activeUsers[0].username && isConnected &&
-                        <div className={classNames(classes.button, classes.startGameButton)} onClick={() => console.log("start game")}>
-                            <div className={classes.buttonText}>{"Start game"}</div>
-                        </div>
-                    }
-                </div>
-            </div>
+                </>
+            }
         </BackgroundWrapper>
     )
 }

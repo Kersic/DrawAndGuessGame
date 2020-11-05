@@ -51,13 +51,14 @@ const addUserInRoom = ( socketId, user, roomId ) => {
         console.log("user added");
         return { userRoom: roomId};
     } else {
-        return { error: 'Game has started cannot add new players' }
+        return { error: 'Game has started. Cannot add new players' }
     }
 }
 
 const removeUserFromRoom = (userId, roomId) => {
     const room = rooms.find((room) => room.id === roomId);
     if(!room) return { error: 'Room not found' };
+    if(room.hasStarted) return { error: 'Game has started. Cannot remove players' }
 
     const userIndex = room.users.findIndex((u) => u._id.toString() === userId.toString());
     if(userIndex > -1){
@@ -83,4 +84,12 @@ const setUserInactive = (socketId) => {
     return { error: "User not found in any room" };
 }
 
-module.exports = {rooms, addUserInRoom, removeUserFromRoom, setUserInactive };
+const startGame = (roomId) => {
+    const room = rooms.find((room) => room.id === roomId);
+    if(!room) return { error: 'Room not found' };
+    if(room.users.filter(u=>u.active).length < 3) return { error: 'Not enough players' };
+    console.log("start game");
+    return {};
+}
+
+module.exports = {rooms, addUserInRoom, removeUserFromRoom, setUserInactive, startGame };
