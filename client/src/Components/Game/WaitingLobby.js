@@ -112,7 +112,7 @@ const WaitingLobby = ({location}) => {
         if((!socket || !socket.connected)) return;
         socket.emit('leaveRoom', { roomId:id, token:getToken() }, (error) => {
             if(error) {
-                alert(error);
+                console.log(error);
             }
             getRooms();
             socket.disconnect();

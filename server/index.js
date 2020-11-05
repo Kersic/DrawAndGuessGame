@@ -10,7 +10,7 @@ const {databaseCredentials} = require("./config");
 const {getDataFromToken} = require("./helperFunctions");
 const userModel = require('./Models/user');
 
-const {addUserInRoom, removeUserFromRoom, setUserInactive, startGame} = require('./rooms');
+const {addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom} = require('./rooms');
 
 const app = express();
 const server = http.createServer(app);
@@ -28,10 +28,13 @@ io.on('connect', (socket) => {
         getDataFromToken(token, (tokenData) => {
             userModel.findOne({_id: tokenData.user._id})
                 .then(user => {
-                    const { userRoom, error } = addUserInRoom(socket.id, user, roomId );
+                    const { userRoom, gameStarted, error } = addUserInRoom(socket.id, user, roomId );
                     if(error) return callback(error);
                     socket.join(userRoom);
                     callback();
+                    if(gameStarted) {
+                        socket.emit('message', { user: null, text: `Welcome ${user.username}! Guess what other players are drawing with typing the exact word into the chat.`});
+                    }
                 })
                 .catch(() => {
                     return callback("User not found");
@@ -45,10 +48,18 @@ io.on('connect', (socket) => {
         });
     });
 
-    socket.on('sendMessage', (message, callback) => {
-        // const user = getUser(socket.id);
-        // io.to(user.room).emit('message', { user: user.name, text: message });
-        // callback();
+    socket.on('sendMessage', ({token, roomId, message}, callback) => {
+        console.log("send Message");
+        getDataFromToken(token, (tokenData) => {
+            const { error } = isUserInRoom(roomId, tokenData.user);
+            if(error) return callback(error);
+            console.log("send Message to room members " + roomId);
+            io.to(roomId).emit('message', { user: tokenData.user.username, text: message });
+            callback();
+        }, (err) => {
+            return callback(err);
+        });
+
     });
 
     socket.on('leaveRoom', ({roomId, token}, callback) => {
@@ -64,8 +75,9 @@ io.on('connect', (socket) => {
 
     socket.on('startGame', ({roomId, token}, callback) => {
         console.log("startGame");
-        getDataFromToken(token, () => {
-            const { error } = startGame(roomId);
+        getDataFromToken(token, (tokenData) => {
+            console.log(tokenData);
+            const { error } = startGame(roomId, tokenData.user);
             if(error) return callback(error);
             io.to(roomId).emit('gameStarted');
             callback();

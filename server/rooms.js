@@ -33,9 +33,10 @@ const addUserInRoom = ( socketId, user, roomId ) => {
 
     const userIndex = room.users.findIndex((u) => u._id.toString() === user._id.toString());
     if(userIndex > -1){
+        console.log("user set active");
         room.users[userIndex].active = true;
         room.users[userIndex].socketId = socketId;
-        return { userRoom: roomId};
+        return { userRoom: roomId, gameStarted: room.hasStarted};
 
     } else if(!room.hasStarted) {
         const newUser = {
@@ -49,7 +50,7 @@ const addUserInRoom = ( socketId, user, roomId ) => {
         }
         room.users.push(newUser);
         console.log("user added");
-        return { userRoom: roomId};
+        return { userRoom: roomId, gameStarted: room.hasStarted};
     } else {
         return { error: 'Game has started. Cannot add new players' }
     }
@@ -77,6 +78,7 @@ const setUserInactive = (socketId) => {
         if(userIndex > -1){
             userFound = true;
             room.users[userIndex].active = false;
+            console.log("user set inactive");
             return { error: null };
         }
     })
@@ -84,12 +86,24 @@ const setUserInactive = (socketId) => {
     return { error: "User not found in any room" };
 }
 
-const startGame = (roomId) => {
+const startGame = (roomId, authData) => {
     const room = rooms.find((room) => room.id === roomId);
     if(!room) return { error: 'Room not found' };
+    console.log(authData);
+    const userIndex = room.users.findIndex((u) => u._id.toString() === authData._id.toString());
+    if(userIndex === -1) return { error: 'User is not in room. Cant start game' };
     if(room.users.filter(u=>u.active).length < 3) return { error: 'Not enough players' };
+    room.hasStarted = true;
     console.log("start game");
     return {};
 }
 
-module.exports = {rooms, addUserInRoom, removeUserFromRoom, setUserInactive, startGame };
+const isUserInRoom = (roomId, authData) => {
+    const room = rooms.find((room) => room.id === roomId);
+    if(!room) return { error: 'Room not found' };
+    const userIndex = room.users.findIndex((u) => u._id.toString() === authData._id.toString());
+    if(userIndex === -1) return { error: 'User is not in room. Cant start game' };
+    return {userInRoom: true}
+}
+
+module.exports = {rooms, addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom};

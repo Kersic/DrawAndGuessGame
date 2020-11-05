@@ -17,7 +17,7 @@ const useRooms = () => {
         httpGet(serverURL + "rooms", getToken(), setIsLoading, (rooms) => {
             setRooms(rooms);
         });
-        const intervalId = setInterval(getRooms, 10000);
+        const intervalId = setInterval(getRooms, 5000);
         return () => {
             clearInterval(intervalId)
         }
