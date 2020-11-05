@@ -41,3 +41,9 @@ export const center = {
     textAlign: "center",
     alignItems: "center",
 }
+
+export const LuckiestGuyFont = {
+    fontFamily: LuckiestGuy,
+    textShadow: textShadow,
+    textTransform: "uppercase",
+}

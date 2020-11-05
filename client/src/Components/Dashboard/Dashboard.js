@@ -4,49 +4,20 @@ import {
     belowBreakpoint, black,
     blue, breakpoint2,
     breakpoint4, center, classNames,
-    cornerRadius, lightOrange,
+    cornerRadius,
     LuckiestGuy,
     orange,
-    red, shadowAllDirections, shadowButtonRight, textShadow,
+    red,
+    textShadow,
     white
 } from "../../mixins";
 import { NavLink } from "react-router-dom";
-import useAuth from "../../Hooks/useAuth";
 import RoomForm from "./RoomForm";
 import useRooms from "../../Hooks/useRooms";
+import BackgroundWrapper from "../BackgroundWrapper";
+import useAuth from "../../Hooks/useAuth";
 
 const useStyles = createUseStyles({
-    background: {
-        minHeight: "100vh",
-        padding: "40px",
-        ...belowBreakpoint(breakpoint4, {
-            padding: "20px",
-        }),
-        backgroundColor: lightOrange,
-    },
-    paper: {
-        backgroundColor: white,
-        minHeight: "100%",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        borderRadius: cornerRadius,
-        boxShadow: shadowAllDirections,
-        textAlign: "center",
-    },
-    title: {
-        fontFamily: LuckiestGuy,
-        fontSize: "90px",
-        color: red,
-        margin: "40px",
-        textShadow: textShadow,
-        ...belowBreakpoint(breakpoint4, {
-            margin: "20px",
-            marginTop: "40px",
-            fontSize: "60px",
-        })
-    },
     gamesWrapper: {
         width: "90%",
         display: "grid",
@@ -95,21 +66,6 @@ const useStyles = createUseStyles({
             boxShadow: "1px 1px 1px gray",
         }
     },
-    logout: {
-        backgroundColor: orange,
-        ...center,
-        fontFamily: LuckiestGuy,
-        color: white,
-        boxShadow: shadowButtonRight,
-        paddingTop: "2px",
-        fontSize: "15px",
-        margin: "20px 20px 0 0",
-        width: "30px",
-        height: "30px",
-        borderRadius: "20px",
-        alignSelf: "flex-end",
-        cursor: "pointer"
-    },
     roomUsers: {
         fontFamily: LuckiestGuy,
         fontSize: "20px",
@@ -129,33 +85,26 @@ const useStyles = createUseStyles({
 
 const Dashboard = () => {
     const classes = useStyles();
-    const {logout} = useAuth();
     const colors = [orange, red, blue];
     const [addingNewRoom, setAddingNewRoom] = useState(false);
     const {rooms} = useRooms();
-
+    const {logout} = useAuth();
 
     return (
-        <div className={classes.background} >
-            <div className={classes.paper}>
-                <div className={classes.logout} onClick={logout}>X</div>
-                <div className={classes.title}>DRAW AND GUESS</div>
-
-                <div className={classes.gamesWrapper}>
-                    <div className={classes.gameBox} onClick={()=> !addingNewRoom ? setAddingNewRoom(true) : null}>
-                        <RoomForm setAddingNewRoom={setAddingNewRoom} addingNewRoom={addingNewRoom} />
-                    </div>
-                    {rooms.map((room, index) => (
-                        <NavLink exact to={`/waiting-lobby?id=${room.id}`} key={room.id} style={{backgroundColor: colors[index % colors.length]}} className={classes.gameBox}>
-                            <div className={classes.roomName}>{room.name}</div>
-                            <div className={classes.roomUsers}>{room.users.length + "/8" }</div>
-                            <div className={classNames(classes.roomJoinButton, room.hasStarted ? classes.disabled : "")}>Join </div>
-                        </NavLink>
-                    ))}
+        <BackgroundWrapper title={"DRAW AND GUESS"} backAction={logout}>
+            <div className={classes.gamesWrapper}>
+                <div className={classes.gameBox} onClick={()=> !addingNewRoom ? setAddingNewRoom(true) : null}>
+                    <RoomForm setAddingNewRoom={setAddingNewRoom} addingNewRoom={addingNewRoom} />
                 </div>
+                {rooms.map((room, index) => (
+                    <NavLink exact to={`/waiting-lobby?id=${room.id}`} key={room.id} style={{backgroundColor: colors[index % colors.length]}} className={classes.gameBox}>
+                        <div className={classes.roomName}>{room.name}</div>
+                        <div className={classes.roomUsers}>{room.users.length + "/8" }</div>
+                        <div className={classNames(classes.roomJoinButton, room.hasStarted ? classes.disabled : "")}>Join </div>
+                    </NavLink>
+                ))}
             </div>
-        </div>
-
+        </BackgroundWrapper>
     )
 }
 
