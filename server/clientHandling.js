@@ -1,7 +1,7 @@
 const {getDataFromToken} = require("./helperFunctions");
 const userModel = require('./Models/user');
 const {addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom, isUserDrawing} = require('./rooms');
-const {handleGame} = require('./gameHandling');
+const {handleGame, showResultAndGivePoints} = require('./gameHandling');
 
 const handleConnection = (socket, io) => {
     socket.on('join', ({ roomId, token }, callback) => {
@@ -15,8 +15,8 @@ const handleConnection = (socket, io) => {
                     callback();
                     if(gameStarted) {
                         socket.emit('message', { user: null, text: `Welcome ${user.username}! Guess what other players are drawing with typing the exact word into the chat.`});
-                        socket.emit('nextPlayerCountdown', { currentPlayer: userRoom.currentPlayer.username, time: 0, gamesPlayed: userRoom.gamesPlayed});
-                        if(user.username === userRoom.currentPlayer.username){
+                        socket.emit('nextPlayerCountdown', { currentPlayer: userRoom.currentPlayer?.username, time: 0, gamesPlayed: userRoom.gamesPlayed});
+                        if(user.username === userRoom.currentPlayer?.username){
                             socket.emit('currentWord', userRoom.currentWord);
                         }
                     }
@@ -36,11 +36,18 @@ const handleConnection = (socket, io) => {
     socket.on('sendMessage', ({token, roomId, message}, callback) => {
         console.log("send Message");
         getDataFromToken(token, (tokenData) => {
-            const { error } = isUserInRoom(roomId, tokenData.user);
+            const { error, room } = isUserInRoom(roomId, tokenData.user);
             if(error) return callback(error);
-            console.log("send Message to room members " + roomId);
             io.to(roomId).emit('message', { user: tokenData.user.username, text: message });
             callback();
+
+            if(message.toLowerCase() === room.currentWord.toLowerCase()){
+                userModel.findOne({_id: tokenData.user._id})
+                    .then(user => {
+                        if(room.currentPlayer && user.username !== room.currentPlayer.username)
+                            showResultAndGivePoints(io, roomId, user);
+                    })
+            }
         }, (err) => {
             return callback(err);
         });

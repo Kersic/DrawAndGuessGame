@@ -6,10 +6,10 @@ import io from "socket.io-client";
 import {
     aboveBreakpoint, belowBreakpoint, blue,
     breakpoint2,
-    breakpoint4, center,
+    breakpoint4, center, classNames,
     cornerRadius,
     lightOrange, LuckiestGuy,
-    orange, red, shadowAllDirections, shadowButtonLeft, shadowButtonRight, shadowTopLeft,
+    orange, red, shadowAllDirections, shadowButtonLeft, shadowButtonRight, shadowTopLeft, textShadow,
     white,
 } from "../../mixins";
 import RoundedInput from "../RoundedInput";
@@ -133,13 +133,32 @@ const useStyles = createUseStyles({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        cursor: "pointer"
+        cursor: "pointer",
+        boxShadow: textShadow,
     },
     scoreWrapper: {
         marginTop: `-${chatWrapperSize / 2}px`,
         backgroundColor: red,
         overflow: "scroll"
     },
+    resultList: {
+        backgroundColor:white,
+        borderRadius: "15px",
+        margin: "20px",
+        marginTop: "40px",
+        padding: "10px",
+    },
+    resultListData: {
+        display: "flex",
+        padding: "10px",
+        justifyContent: "space-between",
+        borderTop: '1px solid gray'
+    },
+    resultListHeader: {
+        borderTop: 'none',
+        fontWeight: "bold",
+        color: "gray",
+    }
 });
 
 let socket;
@@ -152,9 +171,11 @@ const Game = ({location}) => {
     const [time, setTime] = useState("");
     const [nextGameTime, setNextGameTime] = useState(0);
     const [currentPlayer, setCurrentPlayer] = useState(0);
+    const [alertMessage, setAlertMessage] = useState("");
     const [currentWord, setCurrentWord] = useState(0);
     const [gamesPlayed, setGamesPlayed] = useState("");
     const [drawingPanelData, setDrawingPanelData] = useState("");
+    const [users, setUsers] = useState([]);
     const { id } = queryString.parse(location.search);
     const saveableCanvas = useRef(null);
 
@@ -181,10 +202,15 @@ const Game = ({location}) => {
         });
         socket.on('timeCountdown', data => {
             setTime(data.time);
+            setUsers(data.users);
         });
         socket.on('nextPlayerCountdown', data => {
             setNextGameTime(data.time);
             setCurrentPlayer(data.currentPlayer);
+            if(data.time > 0)
+                setAlertMessage("Next Player: " + data.currentPlayer);
+            else
+                setAlertMessage("");
             setGamesPlayed(data.gamesPlayed);
         });
         socket.on('currentWord', word => {
@@ -198,6 +224,15 @@ const Game = ({location}) => {
             if(getUsername() === currentPlayer) return;
             //saveableCanvas.current?.loadSaveData(canvasData);
             setDrawingPanelData(canvasData);
+        });
+        socket.on('result', (data) => {
+            console.log(data);
+            if(data.winner){
+                setAlertMessage(data.winner + " guessed correctly. Word was " + data.word);
+            }
+            else{
+                setAlertMessage("Word was " + data.word);
+            }
         });
     }, []);
 
@@ -228,7 +263,14 @@ const Game = ({location}) => {
                     <div className={classes.topRightBox} />
                 </div>
                 <div className={classes.paper}>
-                    <DrawingPanel saveableCanvas={saveableCanvas} sendCanvasData={sendCanvasData} drawingPanelData={drawingPanelData} nextPlayer={currentPlayer} time={nextGameTime} isEnabled={currentPlayer === getUsername()}/>
+                    <DrawingPanel
+                        saveableCanvas={saveableCanvas}
+                        sendCanvasData={sendCanvasData}
+                        drawingPanelData={drawingPanelData}
+                        alertMessage={alertMessage}
+                        time={nextGameTime}
+                        isEnabled={currentPlayer === getUsername() && nextGameTime === 0}
+                    />
                 </div>
                 <div className={classes.sideBoxes}>
                     {currentWord &&
@@ -250,16 +292,22 @@ const Game = ({location}) => {
                     </div>
                 </div>
                 <div className={classes.scoreWrapper}>
-                    <div>
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                        Why do we use it?
-                        It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                        Why do we use it?
-                        It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                        Why do we use it?
-                        It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                    <div className={classes.resultList}>
+                        <div className={classNames(classes.resultListData, classes.resultListHeader)}>
+                            <div>NAME</div>
+                            <div>POINTS</div>
+                        </div>
+                        {users.map(user =>
+                            <div key={user.username} className={classes.resultListData}>
+                                <div style={{opacity: user.active ? "1" : "0.3",
+                                    fontWeight: user.username === currentPlayer ? "bold" : "",
+                                }}
+                                >
+                                    {user.username}
+                                </div>
+                                <div style={{opacity: user.active ? "1" : "0.5"}}>{user.pointsThisGame}</div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

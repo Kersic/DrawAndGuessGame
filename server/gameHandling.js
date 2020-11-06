@@ -31,7 +31,6 @@ const nextPlayerCountDown = (io, roomId) => {
         counter--;
         io.to(roomId).emit('nextPlayerCountdown', { currentPlayer: room.currentPlayer.username, time: counter, gamesPlayed: room.gamesPlayed});
         if(counter === 0){
-            io.to(roomId).emit('message', { user: null, text: 'started'});
             clearInterval(countDown);
             remainingTimeCountDown(io, roomId);
         }
@@ -44,20 +43,32 @@ const nextPlayerCountDown = (io, roomId) => {
 const remainingTimeCountDown = (io, roomId) => {
     const {room} = getRoom(roomId);
 
-    let counter = 3 * 60;
-    let countDown = setInterval(() => {
+    let counter = 60;//3 * 60;
+    room.countDown = setInterval(() => {
         counter--;
-        io.to(roomId).emit('timeCountdown', { time: getTimeStringFromSeconds(counter)});
-        if(counter === 0){
+        io.to(roomId).emit('timeCountdown', { time: getTimeStringFromSeconds(counter), users: room.users});
+        if(counter <= 0){
             room.currentPlayer = null;
-            io.to(roomId).emit('roundFinished');
-            clearInterval(countDown);
-            nextPlayerCountDown(io, roomId);
+            clearInterval(room.countDown);
+            showResultAndGivePoints(io, roomId, null);
         }
     }, 1000);
-
-    //console.log("test message send");
-    //io.to(roomId).emit('message', { user: null, text: `Test message`});
 }
 
-module.exports = {handleGame};
+const showResultAndGivePoints = (io, roomId, user) => {
+    const {room} = getRoom(roomId);
+    io.to(roomId).emit('roundFinished');
+    if(user !== null){
+        clearInterval(room.countDown);
+        //give points;
+        io.to(roomId).emit('result', { winner: user.username, word: room.currentWord});
+    } else {
+        io.to(roomId).emit('result', { winner: null, word: room.currentWord});
+    }
+    room.currentPlayer = null;
+    room.currentWord = "";
+
+    setTimeout(()=>nextPlayerCountDown(io, roomId), 4000);
+}
+
+module.exports = {handleGame, showResultAndGivePoints};

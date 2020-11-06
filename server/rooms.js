@@ -9,6 +9,7 @@ const rooms = [
         currentPlayer: null,
         currentWord: "",
         gamesPlayed: "",
+        countDown: null,
     },
     {
         id: uuid(),
@@ -18,6 +19,7 @@ const rooms = [
         currentPlayer: null,
         currentWord: "",
         gamesPlayed: "",
+        countDown: null,
     },
     {
         id: uuid(),
@@ -27,6 +29,7 @@ const rooms = [
         currentPlayer: null,
         currentWord: "",
         gamesPlayed: "",
+        countDown: null,
     },
     {
         id: uuid(),
@@ -36,6 +39,7 @@ const rooms = [
         currentPlayer: null,
         currentWord: "",
         gamesPlayed: "",
+        countDown: null,
     },
 ];
 
@@ -116,13 +120,14 @@ const isUserInRoom = (roomId, authData) => {
     const userIndex = room.users.findIndex((u) => u._id.toString() === authData._id.toString());
     if(userIndex === -1) return { error: 'User is not in room. Cant start game' };
 
-    return {userInRoom: true}
+    return {userInRoom: true, room: room}
 }
 
 const isUserDrawing = (roomId, authData) => {
     const room = rooms.find((room) => room.id === roomId);
     if(!room) return { error: 'Room not found' };
-    if(room.currentPlayer._id.toString() === authData._id.toString())
+    if(!room.currentPlayer) return { error: 'No current user fund' };
+    if(room.currentPlayer?._id.toString() === authData._id.toString())
         return { isDrawing: true }
     else
         return { isDrawing: false }
