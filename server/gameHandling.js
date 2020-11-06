@@ -1,7 +1,8 @@
-const {getDataFromToken} = require("./helperFunctions");
-const {getRoom, isUserInRoom} = require('./rooms');
+const {getRoom, removeRoom} = require('./rooms');
 const {getTimeStringFromSeconds} = require('./helperFunctions');
 const {words} = require('./words');
+
+const playerTime = 20;//3*60;
 
 const handleGame = (socket, io, roomId) => {
     setTimeout(()=>nextPlayerCountDown(io, roomId), 1000);
@@ -16,7 +17,23 @@ const nextPlayerCountDown = (io, roomId) => {
        room.currentPlayer = possiblePlayers[Math.floor(Math.random() * possiblePlayers.length)];
        room.currentPlayer.hasPlayed = true;
     } else {
-        io.to(roomId).emit('message', { user: null, text: `Room can close`});
+        //round and save points
+        let winner = null;
+        let tie = false;
+        room.users.forEach((u) => {
+            u.pointsThisGame = Math.round(u.pointsThisGame / 10) * 10;
+            if((u.pointsThisGame > 0  && !winner) || (winner && winner.pointsThisGame < u.pointsThisGame)){
+                winner = u;
+                tie = false;
+            } else if(winner && winner.pointsThisGame === u.pointsThisGame) {
+                tie = true;
+            }
+        });
+        io.to(roomId).emit('timeCountdown', { time: "0:00", users: room.users});
+        io.to(roomId).emit('gameFinished', winner && !tie ? winner.username : null);
+
+        // delete room
+        removeRoom(roomId);
         return;
     }
 
@@ -43,11 +60,11 @@ const nextPlayerCountDown = (io, roomId) => {
 const remainingTimeCountDown = (io, roomId) => {
     const {room} = getRoom(roomId);
 
-    let counter = 60;//3 * 60;
+    room.counter = playerTime;
     room.countDown = setInterval(() => {
-        counter--;
-        io.to(roomId).emit('timeCountdown', { time: getTimeStringFromSeconds(counter), users: room.users});
-        if(counter <= 0){
+        room.counter--;
+        io.to(roomId).emit('timeCountdown', { time: getTimeStringFromSeconds(room.counter), users: room.users});
+        if(room.counter <= 0){
             room.currentPlayer = null;
             clearInterval(room.countDown);
             showResultAndGivePoints(io, roomId, null);
@@ -60,7 +77,16 @@ const showResultAndGivePoints = (io, roomId, user) => {
     io.to(roomId).emit('roundFinished');
     if(user !== null){
         clearInterval(room.countDown);
-        //give points;
+
+        //give points
+        const points = (room.counter * 100) / playerTime;
+        const winner = room.users.find(u => u.username === user.username);
+        if(winner) winner.pointsThisGame += Math.floor(points);
+        const currentPlayer = room.users.find(u => u.username === room.currentPlayer.username);
+        if(currentPlayer) currentPlayer.pointsThisGame += Math.floor(points / 2);
+        io.to(roomId).emit('timeCountdown', { time: "0:00", users: room.users});
+
+
         io.to(roomId).emit('result', { winner: user.username, word: room.currentWord});
     } else {
         io.to(roomId).emit('result', { winner: null, word: room.currentWord});

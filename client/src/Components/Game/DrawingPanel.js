@@ -1,16 +1,17 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {createUseStyles} from "react-jss";
 import {
     belowBreakpoint, blue,
     breakpoint4,
     center,
     cornerRadius, LuckiestGuyFont, red,
-    shadowAllDirections,
+    shadowAllDirections, textShadow,
     white
 } from "../../mixins";
 import CanvasDraw from "react-canvas-draw";
 import UndoIcon from '@material-ui/icons/Undo';
 import ClearIcon from '@material-ui/icons/Clear';
+import {useHistory} from "react-router-dom";
 
 const useStyles = createUseStyles({
     paper: {
@@ -28,6 +29,8 @@ const useStyles = createUseStyles({
     },
     countDownWrapper: {
         position: "absolute",
+        maxWidth: "550px",
+        zIndex: "999999",
     },
     countDownPlayer: {
         ...LuckiestGuyFont,
@@ -41,7 +44,6 @@ const useStyles = createUseStyles({
         margin: "20px",
     },
     buttons: {
-        position: "absolute",
         display: "flex",
     },
     clearButton: {
@@ -52,12 +54,25 @@ const useStyles = createUseStyles({
         color: blue,
         cursor: "pointer",
         marginLeft: "4px",
+    },
+    leaveGameButton: {
+        marginTop: "30px",
+        backgroundColor: red,
+        padding: "20px 40px",
+        paddingTop: "24px",
+        borderRadius: cornerRadius,
+        boxShadow: textShadow,
+        ...LuckiestGuyFont,
+        color: white,
+        fontSize: "40px",
+        cursor: 'pointer',
     }
 });
 
-const DrawingPanel = ({saveableCanvas, sendCanvasData, drawingPanelData, alertMessage, time, isEnabled}) => {
+const DrawingPanel = ({saveableCanvas, sendCanvasData, drawingPanelData, alertMessage, time, isEnabled, gameFinished}) => {
     const classes = useStyles();
     const [canvasSize, setCanvasSize] = useState(0);
+    let history = useHistory();
 
     useEffect(() => {
        if(window.innerWidth < window.innerHeight){
@@ -80,10 +95,11 @@ const DrawingPanel = ({saveableCanvas, sendCanvasData, drawingPanelData, alertMe
     //https://github.com/embiem/react-canvas-draw/blob/master/demo/src/index.js
     return (
         <div className={classes.paper} >
-            {(time > 0 || alertMessage)&&
+            {(time > 0 || alertMessage )&&
                 <div className={classes.countDownWrapper}>
                     {alertMessage && <div className={classes.countDownPlayer}>{alertMessage}</div>}
                     {time > 0 && <div className={classes.countDownTime}>{time}</div>}
+                    {gameFinished && <div onClick={()=> history.push("/")} className={classes.leaveGameButton}>Leave game</div>}
                 </div>
             }
             <div>

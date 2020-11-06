@@ -10,6 +10,7 @@ const rooms = [
         currentWord: "",
         gamesPlayed: "",
         countDown: null,
+        counter: 0,
     },
     {
         id: uuid(),
@@ -20,6 +21,7 @@ const rooms = [
         currentWord: "",
         gamesPlayed: "",
         countDown: null,
+        counter: 0,
     },
     {
         id: uuid(),
@@ -30,6 +32,7 @@ const rooms = [
         currentWord: "",
         gamesPlayed: "",
         countDown: null,
+        counter: 0,
     },
     {
         id: uuid(),
@@ -40,6 +43,7 @@ const rooms = [
         currentWord: "",
         gamesPlayed: "",
         countDown: null,
+        counter: 0,
     },
 ];
 
@@ -139,4 +143,11 @@ const getRoom = (roomId) => {
     return {room}
 }
 
-module.exports = {rooms, addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom, getRoom, isUserDrawing};
+const removeRoom = (roomId) => {
+    const roomIndex = rooms.findIndex((r) => r.id.toString() === roomId.toString());
+    if(roomIndex > -1){
+        rooms.splice(roomIndex, 1)
+    }
+}
+
+module.exports = {rooms, addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom, getRoom, isUserDrawing, removeRoom};

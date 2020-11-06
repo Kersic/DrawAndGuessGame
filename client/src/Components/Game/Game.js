@@ -174,6 +174,7 @@ const Game = ({location}) => {
     const [alertMessage, setAlertMessage] = useState("");
     const [currentWord, setCurrentWord] = useState(0);
     const [gamesPlayed, setGamesPlayed] = useState("");
+    const [gameFinished, setGameFinished] = useState(false);
     const [drawingPanelData, setDrawingPanelData] = useState("");
     const [users, setUsers] = useState([]);
     const { id } = queryString.parse(location.search);
@@ -215,10 +216,22 @@ const Game = ({location}) => {
         });
         socket.on('currentWord', word => {
             setCurrentWord(word);
+            setGamesPlayed(null);
         });
         socket.on('roundFinished', () => {
             saveableCanvas.current?.clear()
             setCurrentWord(null);
+            setCurrentPlayer(null);
+        });
+        socket.on('gameFinished', (winner) => {
+            saveableCanvas.current?.clear()
+            setCurrentWord(null);
+            setGameFinished(true);
+            if(winner)
+                setAlertMessage( "Winner is " + winner);
+            else
+                setAlertMessage( "Game ended in a tie");
+
         });
         socket.on('canvasDataUpdate', (canvasData) => {
             if(getUsername() === currentPlayer) return;
@@ -226,7 +239,6 @@ const Game = ({location}) => {
             setDrawingPanelData(canvasData);
         });
         socket.on('result', (data) => {
-            console.log(data);
             if(data.winner){
                 setAlertMessage(data.winner + " guessed correctly. Word was " + data.word);
             }
@@ -247,7 +259,6 @@ const Game = ({location}) => {
         if(getUsername() !== currentPlayer) return;
         const canvasData = saveableCanvas.current?.getSaveData();
         socket.emit('canvasData', {token: getToken(), roomId: id, canvasData: canvasData});
-        console.log(canvasData);
     }
 
     return (
@@ -270,6 +281,7 @@ const Game = ({location}) => {
                         alertMessage={alertMessage}
                         time={nextGameTime}
                         isEnabled={currentPlayer === getUsername() && nextGameTime === 0}
+                        gameFinished={gameFinished}
                     />
                 </div>
                 <div className={classes.sideBoxes}>
