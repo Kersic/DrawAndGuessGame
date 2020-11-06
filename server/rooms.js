@@ -6,24 +6,36 @@ const rooms = [
         name: 'Room 1',
         users:[],
         hasStarted:false,
+        currentPlayer: null,
+        currentWord: "",
+        gamesPlayed: "",
     },
     {
         id: uuid(),
         name: 'Room 2',
         users:[],
         hasStarted:false,
+        currentPlayer: null,
+        currentWord: "",
+        gamesPlayed: "",
     },
     {
         id: uuid(),
         name: 'Room 3',
         users:[],
         hasStarted:false,
+        currentPlayer: null,
+        currentWord: "",
+        gamesPlayed: "",
     },
     {
         id: uuid(),
         name: 'Room 4',
         users:[],
         hasStarted:false,
+        currentPlayer: null,
+        currentWord: "",
+        gamesPlayed: "",
     },
 ];
 
@@ -36,7 +48,7 @@ const addUserInRoom = ( socketId, user, roomId ) => {
         console.log("user set active");
         room.users[userIndex].active = true;
         room.users[userIndex].socketId = socketId;
-        return { userRoom: roomId, gameStarted: room.hasStarted};
+        return { userRoom: room, gameStarted: room.hasStarted};
 
     } else if(!room.hasStarted) {
         const newUser = {
@@ -50,7 +62,7 @@ const addUserInRoom = ( socketId, user, roomId ) => {
         }
         room.users.push(newUser);
         console.log("user added");
-        return { userRoom: roomId, gameStarted: room.hasStarted};
+        return { userRoom: room, gameStarted: room.hasStarted};
     } else {
         return { error: 'Game has started. Cannot add new players' }
     }
@@ -107,4 +119,19 @@ const isUserInRoom = (roomId, authData) => {
     return {userInRoom: true}
 }
 
-module.exports = {rooms, addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom};
+const isUserDrawing = (roomId, authData) => {
+    const room = rooms.find((room) => room.id === roomId);
+    if(!room) return { error: 'Room not found' };
+    if(room.currentPlayer._id.toString() === authData._id.toString())
+        return { isDrawing: true }
+    else
+        return { isDrawing: false }
+}
+
+const getRoom = (roomId) => {
+    const room = rooms.find((room) => room.id === roomId);
+    if(!room) return { error: 'Room not found' };
+    return {room}
+}
+
+module.exports = {rooms, addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom, getRoom, isUserDrawing};

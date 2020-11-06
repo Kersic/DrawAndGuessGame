@@ -1,6 +1,7 @@
 const {getDataFromToken} = require("./helperFunctions");
 const userModel = require('./Models/user');
-const {addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom} = require('./rooms');
+const {addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom, isUserDrawing} = require('./rooms');
+const {handleGame} = require('./gameHandling');
 
 const handleConnection = (socket, io) => {
     socket.on('join', ({ roomId, token }, callback) => {
@@ -10,10 +11,14 @@ const handleConnection = (socket, io) => {
                 .then(user => {
                     const { userRoom, gameStarted, error } = addUserInRoom(socket.id, user, roomId );
                     if(error) return callback(error);
-                    socket.join(userRoom);
+                    socket.join(userRoom.id);
                     callback();
                     if(gameStarted) {
                         socket.emit('message', { user: null, text: `Welcome ${user.username}! Guess what other players are drawing with typing the exact word into the chat.`});
+                        socket.emit('nextPlayerCountdown', { currentPlayer: userRoom.currentPlayer.username, time: 0, gamesPlayed: userRoom.gamesPlayed});
+                        if(user.username === userRoom.currentPlayer.username){
+                            socket.emit('currentWord', userRoom.currentWord);
+                        }
                     }
                 })
                 .catch(() => {
@@ -61,9 +66,18 @@ const handleConnection = (socket, io) => {
             if(error) return callback(error);
             io.to(roomId).emit('gameStarted');
             callback();
+            handleGame(socket, io, roomId);
         }, (err) => {
             return callback(err);
         });
+    });
+
+    socket.on('canvasData', ({token, roomId, canvasData}) => {
+        getDataFromToken(token, (tokenData) => {
+            const { isDrawing, error } = isUserDrawing(roomId, tokenData.user);
+            if(error || !isDrawing) return;
+            socket.broadcast.to(roomId).emit('canvasDataUpdate', canvasData);
+        })
     });
 
     socket.on('disconnect', () => {

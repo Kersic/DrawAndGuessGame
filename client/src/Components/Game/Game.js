@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {createUseStyles} from "react-jss";
 import queryString from 'query-string';
 import io from "socket.io-client";
@@ -70,6 +70,7 @@ const useStyles = createUseStyles({
         width: "200px",
         borderTopRightRadius: cornerRadius,
         boxShadow: shadowButtonRight,
+        textTransform: "uppercase",
         ...center,
         justifyContent: "start",
         paddingLeft: "30px",
@@ -145,10 +146,17 @@ let socket;
 
 const Game = ({location}) => {
     const classes = useStyles();
-    const {getToken, logout} = useAuth();
+    const {getToken, getUsername, logout} = useAuth();
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState([]);
+    const [time, setTime] = useState("");
+    const [nextGameTime, setNextGameTime] = useState(0);
+    const [currentPlayer, setCurrentPlayer] = useState(0);
+    const [currentWord, setCurrentWord] = useState(0);
+    const [gamesPlayed, setGamesPlayed] = useState("");
+    const [drawingPanelData, setDrawingPanelData] = useState("");
     const { id } = queryString.parse(location.search);
+    const saveableCanvas = useRef(null);
 
     useEffect(() => {
         socket = io(serverURL);
@@ -169,8 +177,27 @@ const Game = ({location}) => {
 
     useEffect(() => {
         socket.on('message', message => {
-            console.log(message);
             setMessages(messages => [ ...messages, message ]);
+        });
+        socket.on('timeCountdown', data => {
+            setTime(data.time);
+        });
+        socket.on('nextPlayerCountdown', data => {
+            setNextGameTime(data.time);
+            setCurrentPlayer(data.currentPlayer);
+            setGamesPlayed(data.gamesPlayed);
+        });
+        socket.on('currentWord', word => {
+            setCurrentWord(word);
+        });
+        socket.on('roundFinished', () => {
+            saveableCanvas.current?.clear()
+            setCurrentWord(null);
+        });
+        socket.on('canvasDataUpdate', (canvasData) => {
+            if(getUsername() === currentPlayer) return;
+            //saveableCanvas.current?.loadSaveData(canvasData);
+            setDrawingPanelData(canvasData);
         });
     }, []);
 
@@ -181,25 +208,34 @@ const Game = ({location}) => {
         }
     }
 
+    const sendCanvasData = () => {
+        if(getUsername() !== currentPlayer) return;
+        const canvasData = saveableCanvas.current?.getSaveData();
+        socket.emit('canvasData', {token: getToken(), roomId: id, canvasData: canvasData});
+        console.log(canvasData);
+    }
+
     return (
         <div className={classes.background}>
             <div className={classes.leftColumn}>
                 <div className={classes.sideBoxes}>
                     <div className={classes.numOfGames}>
-                        GAMES <br/> 2/3
+                        GAMES <br/> {gamesPlayed}
                     </div>
                     <div className={classes.timeWrapper}>
-                        1:30
+                        {time}
                     </div>
                     <div className={classes.topRightBox} />
                 </div>
-                <div className={classes.paper} onClick={() => console.log("draw")}>
-                    <DrawingPanel />
+                <div className={classes.paper}>
+                    <DrawingPanel saveableCanvas={saveableCanvas} sendCanvasData={sendCanvasData} drawingPanelData={drawingPanelData} nextPlayer={currentPlayer} time={nextGameTime} isEnabled={currentPlayer === getUsername()}/>
                 </div>
                 <div className={classes.sideBoxes}>
-                    <div className={classes.wordToDraw}>
-                        TRAIN
-                    </div>
+                    {currentWord &&
+                        <div className={classes.wordToDraw}>
+                            {currentWord}
+                        </div>
+                    }
                 </div>
             </div>
 

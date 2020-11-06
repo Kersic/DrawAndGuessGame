@@ -30,4 +30,11 @@ const verifyToken = (req, res, next) => {
     }
 }
 
-module.exports = {verifyToken, getDataFromToken}
+const getTimeStringFromSeconds = (seconds) => {
+    const min = Math.floor(seconds / 60).toString();
+    let sec = (seconds % 60).toString();
+    sec = sec.length > 1 ? sec : "0"+sec;
+    return `${min}:${sec}`;
+}
+
+module.exports = {verifyToken, getDataFromToken, getTimeStringFromSeconds}

@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {createUseStyles} from "react-jss";
 import {
-    belowBreakpoint,
+    belowBreakpoint, blue,
     breakpoint4,
     center,
-    cornerRadius,
+    cornerRadius, LuckiestGuyFont, red,
     shadowAllDirections,
     white
 } from "../../mixins";
@@ -23,9 +23,23 @@ const useStyles = createUseStyles({
         boxShadow: shadowAllDirections,
         ...center,
     },
+    countDownWrapper: {
+        position: "absolute",
+    },
+    countDownPlayer: {
+        ...LuckiestGuyFont,
+        color: blue,
+        fontSize: "40px",
+    },
+    countDownTime: {
+        ...LuckiestGuyFont,
+        color: red,
+        fontSize: "70px",
+        margin: "20px",
+    }
 });
 
-const DrawingPanel = () => {
+const DrawingPanel = ({saveableCanvas, sendCanvasData, drawingPanelData, nextPlayer, time, isEnabled}) => {
     const classes = useStyles();
     const [canvasSize, setCanvasSize] = useState(0);
 
@@ -37,14 +51,26 @@ const DrawingPanel = () => {
        }
     }, [])
 
+    const clear = () => {
+        saveableCanvas.current?.clear()
+    }
+
     //https://www.npmjs.com/package/react-canvas-draw
     //https://embiem.github.io/react-canvas-draw/
     //https://github.com/embiem/react-canvas-draw/blob/master/demo/src/index.js
     return (
-        <div className={classes.paper} onClick={() => console.log("draw")}>
+        <div className={classes.paper} >
+            {time > 0 &&
+                <div className={classes.countDownWrapper}>
+                    <div className={classes.countDownPlayer}>Next Player: {nextPlayer}</div>
+                    <div className={classes.countDownTime}>{time}</div>
+                </div>
+            }
+            <div onClick={clear}>clear</div>
             <CanvasDraw
-                disabled={false}
-                onChange={(e) => console.log(e)}
+                ref={saveableCanvas}
+                disabled={!isEnabled}
+                onChange={sendCanvasData}
                 canvasWidth={canvasSize}
                 canvasHeight={canvasSize}
                 brushRadius={3}
@@ -52,6 +78,7 @@ const DrawingPanel = () => {
                 lazyRadius={2}
                 hideGrid={false}
                 style={{border: "solid 1px #ebebeb"}}
+                saveData={drawingPanelData}
             />
         </div>
     )
