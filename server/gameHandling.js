@@ -1,13 +1,12 @@
 const {getRoom, removeRoom} = require('./rooms');
 const {getTimeStringFromSeconds} = require('./helperFunctions');
 const {words} = require('./words');
+const userModel = require('./Models/user');
 
 const playerTime = 20;//3*60;
 
 const handleGame = (socket, io, roomId) => {
     setTimeout(()=>nextPlayerCountDown(io, roomId), 1000);
-
-
 }
 
 const nextPlayerCountDown = (io, roomId) => {
@@ -17,7 +16,7 @@ const nextPlayerCountDown = (io, roomId) => {
        room.currentPlayer = possiblePlayers[Math.floor(Math.random() * possiblePlayers.length)];
        room.currentPlayer.hasPlayed = true;
     } else {
-        //round and save points
+        //round points
         let winner = null;
         let tie = false;
         room.users.forEach((u) => {
@@ -32,8 +31,28 @@ const nextPlayerCountDown = (io, roomId) => {
         io.to(roomId).emit('timeCountdown', { time: "0:00", users: room.users});
         io.to(roomId).emit('gameFinished', winner && !tie ? winner.username : null);
 
-        // delete room
-        removeRoom(roomId);
+        //save points
+        room.users.forEach((u) => {
+            userModel.findOne({_id: u._id})
+                .then(user => {
+                    userModel.updateOne(
+                        {_id: u._id},
+                        {
+                            $set: {
+                                points: user.points + u.pointsThisGame,
+                                numberOfPlayedGames: user.numberOfPlayedGames + 1,
+                                numberOfWins: user.numberOfWins + winner.username === user.users ? 1 : 0,
+                            }
+                        })
+                        .then(() => {
+                            removeRoom(roomId);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            removeRoom(roomId);
+                        });
+                });
+        });
         return;
     }
 
