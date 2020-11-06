@@ -3,7 +3,7 @@ const {getTimeStringFromSeconds} = require('./helperFunctions');
 const {words} = require('./words');
 const userModel = require('./Models/user');
 
-const playerTime = 20;//3*60;
+const playerTime = 3*60;
 
 const handleGame = (socket, io, roomId) => {
     setTimeout(()=>nextPlayerCountDown(io, roomId), 1000);
@@ -41,7 +41,7 @@ const nextPlayerCountDown = (io, roomId) => {
                             $set: {
                                 points: user.points + u.pointsThisGame,
                                 numberOfPlayedGames: user.numberOfPlayedGames + 1,
-                                numberOfWins: user.numberOfWins + winner.username === user.users ? 1 : 0,
+                                numberOfWins: user.numberOfWins + winner && winner.username === user.users ? 1 : 0,
                             }
                         })
                         .then(() => {

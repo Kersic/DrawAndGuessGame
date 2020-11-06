@@ -1,11 +1,13 @@
 import React, {useEffect, useRef} from 'react';
 import Message from "./Message";
+import {breakpoint4} from "../../mixins";
 
 const Chat = ({messages}) => {
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+        if(window.innerWidth > breakpoint4)
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
     }
 
     useEffect(scrollToBottom, [messages]);

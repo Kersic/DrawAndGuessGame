@@ -150,4 +150,21 @@ const removeRoom = (roomId) => {
     }
 }
 
-module.exports = {rooms, addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom, getRoom, isUserDrawing, removeRoom};
+const removeInactivePlayersFromRoom = (roomId) => {
+    const {room} = getRoom(roomId);
+    const inactiveIndexes = room.users.map((user, index) => !user.active ? index : null);
+    if(inactiveIndexes && inactiveIndexes.length > 0) inactiveIndexes.filter(i=>i !== null).map(index => room.users.splice(index, 1));
+}
+
+module.exports = {
+    rooms,
+    addUserInRoom,
+    removeUserFromRoom,
+    setUserInactive,
+    startGame,
+    isUserInRoom,
+    getRoom,
+    isUserDrawing,
+    removeRoom,
+    removeInactivePlayersFromRoom
+};

@@ -1,6 +1,6 @@
 const {getDataFromToken} = require("./helperFunctions");
 const userModel = require('./Models/user');
-const {addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom, isUserDrawing} = require('./rooms');
+const {addUserInRoom, removeUserFromRoom, setUserInactive, startGame, isUserInRoom, isUserDrawing, removeInactivePlayersFromRoom} = require('./rooms');
 const {handleGame, showResultAndGivePoints} = require('./gameHandling');
 
 const handleConnection = (socket, io) => {
@@ -20,13 +20,24 @@ const handleConnection = (socket, io) => {
                             socket.emit('currentWord', userRoom.currentWord);
                         }
                     }
+
+                    if(userRoom.users.filter(i=>i.active).length >= 8){
+                        console.log("room is full startGame");
+                        getDataFromToken(token, (tokenData) => {
+                            removeInactivePlayersFromRoom(roomId);
+                            const { error } = startGame(roomId, tokenData.user);
+                            if(error) return callback(error);
+                            callback();
+                            io.to(roomId).emit('gameStarted');
+                            handleGame(socket, io, roomId);
+                        }, (err) => {
+                            return callback(err);
+                        });
+                    }
                 })
                 .catch(() => {
                     return callback("User not found");
                 });
-
-            // socket.emit('message', { user: null, text: `Welcome ${user.name}!`});
-            // socket.broadcast.to(user.roomId).emit('message', { user: null, text: `${user.name} has joined!` });
 
         }, (err) => {
             return callback(err);
@@ -68,7 +79,7 @@ const handleConnection = (socket, io) => {
     socket.on('startGame', ({roomId, token}, callback) => {
         console.log("startGame");
         getDataFromToken(token, (tokenData) => {
-            console.log(tokenData);
+            removeInactivePlayersFromRoom(roomId);
             const { error } = startGame(roomId, tokenData.user);
             if(error) return callback(error);
             io.to(roomId).emit('gameStarted');

@@ -74,6 +74,7 @@ const useStyles = createUseStyles({
         ...center,
         justifyContent: "start",
         paddingLeft: "30px",
+        textShadow: textShadow,
     },
     topRightBox: {
         ...belowBreakpoint(breakpoint4, {
@@ -87,7 +88,8 @@ const useStyles = createUseStyles({
         color: white,
         fontSize: "25px",
         display: "flex",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        textShadow: textShadow,
     },
     leftColumn: {
         display: "grid",
@@ -147,6 +149,7 @@ const useStyles = createUseStyles({
         margin: "20px",
         marginTop: "40px",
         padding: "10px",
+        boxShadow: textShadow,
     },
     resultListData: {
         display: "flex",
@@ -261,8 +264,13 @@ const Game = ({location}) => {
         socket.emit('canvasData', {token: getToken(), roomId: id, canvasData: canvasData});
     }
 
+    const handleKeyDown = (event) => {
+        if (event.keyCode !== 13) return;
+        sendMessage(event);
+    }
+
     return (
-        <div className={classes.background}>
+        <div className={classes.background} onKeyDown={handleKeyDown}>
             <div className={classes.leftColumn}>
                 <div className={classes.sideBoxes}>
                     <div className={classes.numOfGames}>
