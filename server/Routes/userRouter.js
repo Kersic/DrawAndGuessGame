@@ -73,11 +73,11 @@ router.post('/login', (req, res) => {
     })
 });
 
-router.get('/:id', verifyToken, (req, res) => {
-    console.log('GET: user/:id');
-    console.log(req.authData);
-    userModel.findOne({_id: req.params.id})
+router.get('/profile', verifyToken, (req, res) => {
+    console.log('GET: user/profile');
+    userModel.findOne({_id: req.authData.user._id})
         .then(data => {
+            data.password=null;
             res.json(data);
         })
         .catch(err => {
@@ -85,6 +85,7 @@ router.get('/:id', verifyToken, (req, res) => {
             res.status(500).json(err);
         });
 });
+
 
 
 module.exports = router;

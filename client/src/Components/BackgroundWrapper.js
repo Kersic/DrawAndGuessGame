@@ -9,6 +9,9 @@ import {
     shadowAllDirections, shadowButtonRight,
     white
 } from "../mixins";
+import PersonIcon from '@material-ui/icons/Person';
+import {AccountCircle} from "@material-ui/icons";
+import {useHistory} from "react-router-dom";
 
 const useStyles = createUseStyles({
     background: {
@@ -53,17 +56,24 @@ const useStyles = createUseStyles({
         width: "30px",
         height: "30px",
         borderRadius: "20px",
-        alignSelf: "flex-end",
         cursor: "pointer"
     },
+    buttonsWrapper: {
+        display:"flex",
+        alignSelf: "flex-end",
+    }
 });
 
-const BackgroundWrapper = ({children, title, backAction}) => {
+const BackgroundWrapper = ({children, title, backAction, showProfile}) => {
     const classes = useStyles();
+    let history = useHistory();
     return (
         <div className={classes.background} >
             <div className={classes.paper}>
-                <div className={classes.logout} onClick={backAction}>X</div>
+                <div className={classes.buttonsWrapper}>
+                    {showProfile && <div className={classes.logout} onClick={()=>history.push("/profile")}><PersonIcon /></div>}
+                    <div className={classes.logout} onClick={backAction}>X</div>
+                </div>
                 <div className={classes.title}>{title}</div>
                 {children}
             </div>

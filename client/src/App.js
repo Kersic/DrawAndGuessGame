@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Profiler} from 'react';
 import './App.css'
 import {YanoneKaffeesatz} from "./mixins";
 import { createUseStyles } from 'react-jss';
@@ -9,6 +9,7 @@ import Dashboard from "./Components/Dashboard/Dashboard";
 import Game from "./Components/Game/Game";
 import PrivateRoute from "./Components/Login/PriveteRoute";
 import WaitingLobby from "./Components/Game/WaitingLobby";
+import Profile from "./Components/Profile";
 
 const useStyles = createUseStyles({
     app: {
@@ -27,6 +28,7 @@ function App() {
                 <Route exact path="/register" component={Register} />
                 <PrivateRoute path="/game" component={Game} />
                 <PrivateRoute path="/waiting-lobby" component={WaitingLobby} />
+                <PrivateRoute path="/profile" component={Profile} />
                 <PrivateRoute path="/" component={Dashboard} />
             </Switch>
         </div>

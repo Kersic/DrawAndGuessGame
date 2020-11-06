@@ -1,6 +1,6 @@
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {LoaderContext} from "../Contexts/LoaderPrivider";
-import {httpPost} from "../Services/Fetcher";
+import {httpGet, httpPost} from "../Services/Fetcher";
 import {serverURL} from "../config";
 import { useHistory } from "react-router-dom";
 import {AlertContext} from "../Contexts/AlertProvider";
@@ -8,6 +8,7 @@ import {AlertContext} from "../Contexts/AlertProvider";
 function useAuth() {
     const { setIsLoading } = useContext(LoaderContext);
     const { setAlert } = useContext(AlertContext);
+    const [profile, setProfile] = useState();
     let history = useHistory();
 
     const login = (email, password) => {
@@ -52,6 +53,12 @@ function useAuth() {
         )
     }
 
+    const fetchProfile = () => {
+        httpGet(serverURL + "user/profile", getToken(), setIsLoading, (data) => {
+            setProfile(data);
+        })
+    };
+
     const logout = () => {
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('username');
@@ -68,6 +75,6 @@ function useAuth() {
 
     const isLoggedIn = !!sessionStorage.getItem('token');
 
-    return {login, register, logout, getToken, getUsername, isLoggedIn};
+    return {login, register, logout, getToken, getUsername, isLoggedIn, fetchProfile, profile};
 }
 export default useAuth;
