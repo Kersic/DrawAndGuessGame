@@ -89,9 +89,9 @@ const setUserInactive = (socketId) => {
 const startGame = (roomId, authData) => {
     const room = rooms.find((room) => room.id === roomId);
     if(!room) return { error: 'Room not found' };
-    console.log(authData);
     const userIndex = room.users.findIndex((u) => u._id.toString() === authData._id.toString());
     if(userIndex === -1) return { error: 'User is not in room. Cant start game' };
+
     if(room.users.filter(u=>u.active).length < 3) return { error: 'Not enough players' };
     room.hasStarted = true;
     console.log("start game");
@@ -103,6 +103,7 @@ const isUserInRoom = (roomId, authData) => {
     if(!room) return { error: 'Room not found' };
     const userIndex = room.users.findIndex((u) => u._id.toString() === authData._id.toString());
     if(userIndex === -1) return { error: 'User is not in room. Cant start game' };
+
     return {userInRoom: true}
 }
 

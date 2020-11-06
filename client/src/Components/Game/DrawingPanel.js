@@ -43,6 +43,7 @@ const DrawingPanel = () => {
     return (
         <div className={classes.paper} onClick={() => console.log("draw")}>
             <CanvasDraw
+                disabled={false}
                 onChange={(e) => console.log(e)}
                 canvasWidth={canvasSize}
                 canvasHeight={canvasSize}
