@@ -17,6 +17,7 @@ import DrawingPanel from "./DrawingPanel";
 import {serverURL} from "../../config";
 import Chat from "../Chat/Chat";
 import useAuth from "../../Hooks/useAuth";
+import {useHistory} from "react-router-dom";
 
 const chatWrapperSize = 50;
 const infoBoxSizes = 70;
@@ -50,7 +51,7 @@ const useStyles = createUseStyles({
         boxShadow: shadowButtonRight,
         ...center,
         justifyContent: "start",
-        paddingLeft: "30px",
+        paddingLeft: "60px",
     },
     timeWrapper: {
         backgroundColor: red,
@@ -111,7 +112,10 @@ const useStyles = createUseStyles({
     },
     chatWrapper: {
         backgroundColor: orange,
-        overflow: "scroll"
+        overflowY: "scroll",
+        "&::-webkit-scrollbar": {
+            display: 'none',
+        }
     },
     chatInputWrapper:{
         backgroundColor: blue,
@@ -141,7 +145,10 @@ const useStyles = createUseStyles({
     scoreWrapper: {
         marginTop: `-${chatWrapperSize / 2}px`,
         backgroundColor: red,
-        overflow: "scroll"
+        overflowY: "scroll",
+        "&::-webkit-scrollbar": {
+            display: 'none',
+        }
     },
     resultList: {
         backgroundColor:white,
@@ -161,7 +168,24 @@ const useStyles = createUseStyles({
         borderTop: 'none',
         fontWeight: "bold",
         color: "gray",
-    }
+    },
+    logout: {
+        backgroundColor: white,
+        ...center,
+        fontFamily: LuckiestGuy,
+        color: orange,
+        boxShadow: textShadow,
+        paddingTop: "2px",
+        fontSize: "15px",
+        margin: "20px 20px 0 0",
+        width: "30px",
+        height: "30px",
+        borderRadius: "20px",
+        cursor: "pointer",
+        position: 'fixed',
+        zIndex: 10,
+        left: "10px",
+    },
 });
 
 let socket;
@@ -169,13 +193,14 @@ let socket;
 const Game = ({location}) => {
     const classes = useStyles();
     const {getToken, getUsername, logout} = useAuth();
+    const history = useHistory();
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState([]);
     const [time, setTime] = useState("");
     const [nextGameTime, setNextGameTime] = useState(0);
-    const [currentPlayer, setCurrentPlayer] = useState(0);
+    const [currentPlayer, setCurrentPlayer] = useState("");
     const [alertMessage, setAlertMessage] = useState("");
-    const [currentWord, setCurrentWord] = useState(0);
+    const [currentWord, setCurrentWord] = useState("");
     const [gamesPlayed, setGamesPlayed] = useState("");
     const [gameFinished, setGameFinished] = useState(false);
     const [drawingPanelData, setDrawingPanelData] = useState("");
@@ -271,6 +296,7 @@ const Game = ({location}) => {
 
     return (
         <div className={classes.background} onKeyDown={handleKeyDown}>
+            <div className={classes.logout} onClick={() => history.push('/')}>X</div>
             <div className={classes.leftColumn}>
                 <div className={classes.sideBoxes}>
                     <div className={classes.numOfGames}>
@@ -279,7 +305,7 @@ const Game = ({location}) => {
                     <div className={classes.timeWrapper}>
                         {time}
                     </div>
-                    <div className={classes.topRightBox} />
+                    <div />
                 </div>
                 <div className={classes.paper}>
                     <DrawingPanel
@@ -293,7 +319,7 @@ const Game = ({location}) => {
                     />
                 </div>
                 <div className={classes.sideBoxes}>
-                    {currentWord &&
+                    {currentWord && currentWord != 0 &&
                         <div className={classes.wordToDraw}>
                             {currentWord}
                         </div>
@@ -306,7 +332,7 @@ const Game = ({location}) => {
                    <Chat messages={messages} />
                 </div>
                 <div className={classes.chatInputWrapper}>
-                    <RoundedInput value={message} setValue={setMessage} placeholder={"Write answer..."} />
+                    <RoundedInput value={message} setValue={setMessage} placeholder={"Write answer..."} disabled={gameFinished}/>
                     <div className={classes.sendButton} onClick={sendMessage}>
                         ᗌ
                     </div>

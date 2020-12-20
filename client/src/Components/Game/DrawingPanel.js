@@ -83,10 +83,12 @@ const DrawingPanel = ({saveableCanvas, sendCanvasData, drawingPanelData, alertMe
     }, [])
 
     const clear = () => {
+        if(!isEnabled) return;
         saveableCanvas.current?.clear()
     }
 
     const undo = () => {
+        if(!isEnabled) return;
         saveableCanvas.current?.undo()
     }
 

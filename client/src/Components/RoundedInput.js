@@ -20,10 +20,10 @@ const useStyles = createUseStyles({
     },
 });
 
-export const RoundedInput = ({value, setValue, placeholder, type}) => {
+export const RoundedInput = ({value, setValue, placeholder, type, disabled}) => {
     const classes = useStyles();
     return (
-        <input type={type?type:"text"} value={value} onChange={(e) => setValue(e.target.value)} className={classes.roundedInput} placeholder={placeholder} autoComplete={"on"}/>
+        <input type={type?type:"text"} value={value} disabled={disabled} onChange={(e) => setValue(e.target.value)} className={classes.roundedInput} placeholder={placeholder} autoComplete={"on"}/>
     )
 }
 

@@ -1,7 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import BackgroundWrapper from "../BackgroundWrapper";
 import {createUseStyles} from "react-jss";
-import {blue, classNames, cornerRadius, LuckiestGuyFont, orange, red, textShadow, white} from "../../mixins";
+import {
+    belowBreakpoint,
+    blue, breakpoint4,
+    classNames,
+    cornerRadius,
+    LuckiestGuyFont,
+    orange,
+    red,
+    textShadow,
+    white
+} from "../../mixins";
 import {useHistory} from "react-router-dom";
 import useRooms from "../../Hooks/useRooms";
 import queryString from 'query-string';
@@ -17,6 +27,9 @@ const useStyles = createUseStyles({
     roomDataWrapper: {
         display: "grid",
         gridTemplateColumns: "1fr 1fr ",
+        ...belowBreakpoint(breakpoint4,{
+            gridTemplateColumns: "auto",
+        }),
         width: "100%",
         margin: "40px 0",
     },

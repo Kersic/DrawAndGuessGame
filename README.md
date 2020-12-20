@@ -4,13 +4,15 @@ Draw and Guess Game for School project.
 
 <hr/>
 
-APP: https://5fa25f0a59472124380d6be0--lucid-pare-7f85ac.netlify.app/
+APP: https://lucid-pare-7f85ac.netlify.app
 <br />
 run locally: npm start
 
 ###### checklist for deploying React to Netlify:
+- (netlify login)
 - npm run build
-- netlify deploy
+- netlify deploy (publish directory : ./build)
+- enable route reloading with _redirect file in public
 
 SERVER: https://scoketio-chat-app.herokuapp.com/
 <br />
@@ -18,11 +20,8 @@ run locally: npm start
 
 ###### checklist for deploying express with socket.io on Heroku:
 - end of video: https://www.youtube.com/watch?v=ZwFA3YMfkoc
-- Deploy changes: 
-    - heroku login
-    - git add .
-    - git commit -m "commit"
-    - git push heroku master
+- Deploy: same as todoProject
 - Restart server: heroku restart
+- heroku logs: heroku logs --tail
 <hr/>
 
