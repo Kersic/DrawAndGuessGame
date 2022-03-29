@@ -4,7 +4,6 @@ Draw and Guess Game for School project.
 
 <hr/>
 
-APP: https://lucid-pare-7f85ac.netlify.app
 <br />
 run locally: npm start
 
@@ -14,7 +13,6 @@ run locally: npm start
 - netlify deploy (publish directory : ./build)
 - enable route reloading with _redirect file in public
 
-SERVER: https://scoketio-chat-app.herokuapp.com/
 <br />
 run locally: npm start
 
