@@ -26,6 +26,7 @@ run locally:
 SERVER: https://scoketio-chat-app.herokuapp.com/
 <br />
 run locally: 
+- rename configTemplate.js to config.js and add credentials
 - npm install
 - npm start
 
