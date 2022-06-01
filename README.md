@@ -5,9 +5,9 @@ Draw and Guess Game for School project.
 ##### https://lucid-pare-7f85ac.netlify.app
 test accounts:
 <br />
-artist@gmail.com 12345678
-painter@gmail.com 12345678
-creator@gmail.com 12345678
+artist@gmail.com 12345678 <br />
+painter@gmail.com 12345678 <br />
+creator@gmail.com 12345678 <br />
 
 <hr/>
 
@@ -36,3 +36,8 @@ run locally:
 - heroku logs: heroku logs --tail
 <hr/>
 
+<hr/>
+
+<img src="https://github.com/Kersic/DrawAndGuessGame/blob/master/screenshots/Screenshot3.png" width="600">
+<img src="https://github.com/Kersic/DrawAndGuessGame/blob/master/screenshots/Screenshot2.png" width="600">
+<img src="https://github.com/Kersic/DrawAndGuessGame/blob/master/screenshots/Screenshot1.png" width="600">
