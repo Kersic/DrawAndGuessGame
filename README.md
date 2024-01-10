@@ -2,14 +2,6 @@
 
 Draw and Guess Game for School project.
 
-You can try the game here: https://lucid-pare-7f85ac.netlify.app <br />
-You will need three accounts. You can use the accounts below. Please note that it may take more time on the first login because heroku server needs to wake up. <br />
-<br />
-Test accounts: <br />
-artist@gmail.com 12345678 <br />
-painter@gmail.com 12345678 <br />
-creator@gmail.com 12345678 <br />
-
 <hr/>
 
 APP: https://lucid-pare-7f85ac.netlify.app
